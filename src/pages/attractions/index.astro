@@ -1,0 +1,84 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const allAttractions = await getCollection('attractions');
+
+const categories = [...new Set(allAttractions.map(a => a.data.category))].sort();
+const areas = [...new Set(allAttractions.map(a => a.data.area))].sort();
+const allTags = [...new Set(allAttractions.flatMap(a => a.data.tags))].sort();
+---
+<BaseLayout title="Attractions" description="Attractions in and around Hakodate">
+  <h1>Attractions</h1>
+
+  <div class="filters">
+    <label>
+      Category
+      <select id="filter-category">
+        <option value="">All</option>
+        {categories.map(c => <option value={c}>{c}</option>)}
+      </select>
+    </label>
+
+    <label>
+      Area
+      <select id="filter-area">
+        <option value="">All</option>
+        {areas.map(a => <option value={a}>{a}</option>)}
+      </select>
+    </label>
+
+    <label>
+      Tag
+      <select id="filter-tag">
+        <option value="">All</option>
+        {allTags.map(t => <option value={t}>{t}</option>)}
+      </select>
+    </label>
+  </div>
+
+  <ul id="attraction-list" class="listing-grid">
+    {allAttractions.map(a => (
+      <li
+        class="listing-card"
+        data-category={a.data.category}
+        data-area={a.data.area}
+        data-tags={a.data.tags.join(',')}
+      >
+        <a href={`/attractions/${a.id}`}>
+          <h2>{a.data.name}</h2>
+          <p>{a.data.category} — {a.data.area}</p>
+          <p>{a.data.entryFee} · ★ {a.data.rating}</p>
+          <div class="tags">
+            {a.data.tags.map(tag => <span class="tag">{tag}</span>)}
+          </div>
+        </a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
+
+<script>
+  const categorySelect = document.getElementById('filter-category') as HTMLSelectElement;
+  const areaSelect = document.getElementById('filter-area') as HTMLSelectElement;
+  const tagSelect = document.getElementById('filter-tag') as HTMLSelectElement;
+  const cards = document.querySelectorAll<HTMLElement>('.listing-card');
+
+  function applyFilters() {
+    const category = categorySelect.value;
+    const area = areaSelect.value;
+    const tag = tagSelect.value;
+
+    cards.forEach(card => {
+      const matchesCategory = !category || card.dataset.category === category;
+      const matchesArea = !area || card.dataset.area === area;
+      const matchesTag = !tag || card.dataset.tags?.split(',').includes(tag);
+
+      card.style.display = (matchesCategory && matchesArea && matchesTag) ? '' : 'none';
+    });
+  }
+
+  categorySelect.addEventListener('change', applyFilters);
+  areaSelect.addEventListener('change', applyFilters);
+  tagSelect.addEventListener('change', applyFilters);
+</script>

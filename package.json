@@ -7,11 +7,17 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
     "astro": "^7.1.5"
+  },
+  "devDependencies": {
+    "pagefind": "^1.5.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
   }
 }

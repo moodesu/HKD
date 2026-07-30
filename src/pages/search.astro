@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Search" description="Search Hakodate Guide">
+  <h1>Search Results</h1>
+  <p id="search-query-display"></p>
+  <ul id="full-search-results" class="listing-grid"></ul>
+  <p id="no-results" style="display:none;">No results found.</p>
+</BaseLayout>
+
+<script is:inline>
+  async function runFullSearch() {
+    const params = new URLSearchParams(window.location.search);
+    const term = params.get('q') || '';
+
+    document.getElementById('search-query-display').textContent = term
+      ? `Showing results for "${term}"`
+      : '';
+
+    if (!term) return;
+
+    const pagefind = await import('/pagefind/pagefind.js');
+    await pagefind.init();
+
+    const search = await pagefind.search(term);
+    const resultsList = document.getElementById('full-search-results');
+    const noResults = document.getElementById('no-results');
+
+    if (search.results.length === 0) {
+      noResults.style.display = 'block';
+      return;
+    }
+
+    for (const result of search.results) {
+      const data = await result.data();
+      const li = document.createElement('li');
+      li.className = 'listing-card';
+      li.innerHTML = `
+        <a href="${data.url}">
+          <h2>${data.meta.title}</h2>
+          <p>${data.excerpt}</p>
+        </a>
+      `;
+      resultsList.appendChild(li);
+    }
+  }
+
+  runFullSearch();
+</script>

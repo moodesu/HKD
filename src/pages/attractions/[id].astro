@@ -1,0 +1,36 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const attractions = await getCollection('attractions');
+  return attractions.map(attraction => ({
+    params: { id: attraction.id },
+    props: { attraction },
+  }));
+}
+
+const { attraction } = Astro.props;
+const { Content } = await render(attraction);
+---
+<BaseLayout title={attraction.data.name} description={attraction.data.name}>
+  <article data-pagefind-body>
+    <h1>{attraction.data.name}</h1>
+    <p><strong>{attraction.data.category}</strong> — {attraction.data.area}</p>
+
+    <ul>
+      <li>Opening Hours: {attraction.data.openingHours}</li>
+      <li>Entry Fee: {attraction.data.entryFee}</li>
+      <li>Address: {attraction.data.address}</li>
+      <li>Rating: {attraction.data.rating} / 5</li>
+    </ul>
+
+    <div class="tags">
+      {attraction.data.tags.map(tag => <span class="tag">{tag}</span>)}
+    </div>
+
+    <div class="review-body">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

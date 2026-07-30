@@ -1,0 +1,16 @@
+---
+const navItems = [
+  { label: "Home", href: "/" },
+  { label: "Restaurants", href: "/restaurants" },
+  { label: "Bars", href: "/bars" },
+  { label: "Attractions", href: "/attractions" },
+];
+import SearchBox from './SearchBox.astro';
+---
+<header class="site-header">
+  <a href="/" class="logo">Hakodate Guide</a>
+  <nav>
+    {navItems.map(item => <a href={item.href}>{item.label}</a>)}
+  </nav>
+  <SearchBox />
+</header>

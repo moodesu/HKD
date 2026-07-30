@@ -1,0 +1,36 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const bars = await getCollection('bars');
+  return bars.map(bar => ({
+    params: { id: bar.id },
+    props: { bar },
+  }));
+}
+
+const { bar } = Astro.props;
+const { Content } = await render(bar);
+---
+<BaseLayout title={bar.data.name} description={bar.data.name}>
+  <article data-pagefind-body>
+    <h1>{bar.data.name}</h1>
+    <p><strong>{bar.data.category}</strong> — {bar.data.area}</p>
+
+    <ul>
+      <li>Price: {bar.data.priceRange}</li>
+      {bar.data.happyHour && <li>Happy Hour: {bar.data.happyHour}</li>}
+      <li>Address: {bar.data.address}</li>
+      <li>Rating: {bar.data.rating} / 5</li>
+    </ul>
+
+    <div class="tags">
+      {bar.data.tags.map(tag => <span class="tag">{tag}</span>)}
+    </div>
+
+    <div class="review-body">
+      <Content />
+    </div>
+</article>
+</BaseLayout>
