@@ -325,15 +325,16 @@ main {
   border-radius: 12px;
   margin: 1rem 0 1.5rem;
 }
+
 .info-card {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
   gap: 2rem;
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 1.75rem;
-  margin: 1.5rem 0;
+  margin: 0 0 2rem;
+  box-shadow: 0 2px 12px rgba(58, 46, 34, 0.08);
 }
 
 .info-card-summary h2 {
@@ -432,4 +433,60 @@ main {
 
 .review-body p {
   margin: 0 0 1.25rem;
+}
+.review-card {
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(58, 46, 34, 0.08);
+}
+
+.review-card h2 {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.review-body {
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: var(--color-text);
+}
+
+.review-body p {
+  margin: 0 0 1.25rem;
+}
+
+.review-body p:first-of-type {
+  font-size: 1.1rem;
+  color: var(--color-text);
+}
+
+.review-body p:last-child {
+  margin-bottom: 0;
+}
+
+.review-body strong {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.review-body a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-light);
+  text-underline-offset: 2px;
+}
+
+.review-body a:hover {
+  text-decoration-color: var(--color-accent);
+}
+
+.review-body blockquote {
+  margin: 1.5rem 0;
+  padding: 0.5rem 0 0.5rem 1.25rem;
+  border-left: 3px solid var(--color-accent);
+  color: var(--color-muted);
+  font-style: italic;
 }
