@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro:assets';
+
 interface Props {
   href: string;
   name: string;
@@ -8,10 +11,11 @@ interface Props {
   tags: string[];
   priceRange?: string;
   entryFee?: string;
+  image?: ImageMetadata;
   filterable?: boolean;
 }
 
-const { href, name, category, area, rating, tags, priceRange, entryFee, filterable = false } = Astro.props;
+const { href, name, category, area, rating, tags, priceRange, entryFee, image, filterable = false } = Astro.props;
 ---
 <li
   class="listing-card"
@@ -20,15 +24,24 @@ const { href, name, category, area, rating, tags, priceRange, entryFee, filterab
   data-tags={filterable ? tags.join(',') : undefined}
 >
   <a href={href}>
-    <h2>{name}</h2>
-    <p>{category} — {area}</p>
-    <p>
-      {priceRange && <>{priceRange} · </>}
-      {entryFee && <>{entryFee} · </>}
-      ★ {rating}
-    </p>
-    <div class="tags">
-      {tags.map(tag => <span class="tag">{tag}</span>)}
+    <div class="card-image">
+      {image ? (
+        <Image src={image} alt={name} width={400} height={300} />
+      ) : (
+        <div class="card-image-placeholder"></div>
+      )}
+    </div>
+    <div class="card-body">
+      <h2>{name}</h2>
+      <p>{category} — {area}</p>
+      <p>
+        {priceRange && <>{priceRange} · </>}
+        {entryFee && <>{entryFee} · </>}
+        ★ {rating}
+      </p>
+      <div class="tags">
+        {tags.map(tag => <span class="tag">{tag}</span>)}
+      </div>
     </div>
   </a>
 </li>

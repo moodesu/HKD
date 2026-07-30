@@ -33,6 +33,7 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
             rating={r.data.rating}
             tags={r.data.tags}
             priceRange={r.data.priceRange}
+            image={r.data.image}
           />
         ))}
       </ul>
@@ -55,6 +56,7 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
             rating={b.data.rating}
             tags={b.data.tags}
             priceRange={b.data.priceRange}
+            image={b.data.image}
           />
         ))}
       </ul>
@@ -77,6 +79,7 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
             rating={a.data.rating}
             tags={a.data.tags}
             entryFee={a.data.entryFee}
+            image={a.data.image}
           />
         ))}
       </ul>

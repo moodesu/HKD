@@ -45,6 +45,7 @@ const allTags = [...new Set(allRestaurants.flatMap(r => r.data.tags))].sort();
         rating={r.data.rating}
         tags={r.data.tags}
         priceRange={r.data.priceRange}
+        image={r.data.image}
         filterable={true}
       />
     ))}

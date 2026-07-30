@@ -46,6 +46,7 @@ const allTags = [...new Set(allBars.flatMap(b => b.data.tags))].sort();
         tags={b.data.tags}
         priceRange={b.data.priceRange}
         filterable={true}
+        image={b.data.image}
       />
     ))}
   </ul>

@@ -46,6 +46,7 @@ const allTags = [...new Set(allAttractions.flatMap(a => a.data.tags))].sort();
         tags={a.data.tags}
         entryFee={a.data.entryFee}
         filterable={true}
+        image={a.data.image}
       />
     ))}
   </ul>
