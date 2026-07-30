@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import ListingCard from './ListingCard.astro';
+
+interface Props {
+  collection: 'restaurants' | 'bars' | 'attractions';
+  currentId: string;
+  area: string;
+  category: string;
+}
+
+const { collection, currentId, area, category } = Astro.props;
+
+const all = await getCollection(collection);
+const others = all.filter(entry => entry.id !== currentId);
+
+// Prioritize same area first, then same category, cap at 3
+const sameArea = others.filter(e => e.data.area === area);
+const sameCategory = others.filter(e => e.data.category === category && e.data.area !== area);
+const related = [...sameArea, ...sameCategory].slice(0, 3);
+---
+{related.length > 0 && (
+  <section class="related-places">
+    <h2>You might also like</h2>
+    <ul class="listing-grid">
+      {related.map(entry => (
+        <ListingCard
+          href={`/${collection}/${entry.id}`}
+          name={entry.data.name}
+          category={entry.data.category}
+          area={entry.data.area}
+          rating={entry.data.rating}
+          tags={entry.data.tags}
+          priceRange={entry.data.priceRange}
+          entryFee={entry.data.entryFee}
+          image={entry.data.image}
+        />
+      ))}
+    </ul>
+  </section>
+)}

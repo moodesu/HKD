@@ -1,0 +1,19 @@
+---
+interface Props {
+  address: string;
+  name: string;
+}
+const { address, name } = Astro.props;
+const query = encodeURIComponent(`${name}, ${address}`);
+---
+<div class="map-embed">
+  <iframe
+    src={`https://www.google.com/maps?q=${query}&output=embed`}
+    width="100%"
+    height="300"
+    style="border:0;"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    title={`Map showing ${name}`}
+  ></iframe>
+</div>

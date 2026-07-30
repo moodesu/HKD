@@ -490,3 +490,23 @@ main {
   color: var(--color-muted);
   font-style: italic;
 }
+.map-embed {
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(58, 46, 34, 0.08);
+}
+
+.map-embed iframe {
+  display: block;
+}
+
+.related-places {
+  margin-top: 3rem;
+}
+
+.related-places h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
