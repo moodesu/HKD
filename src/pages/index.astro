@@ -1,12 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ListingCard from '../components/ListingCard.astro';
 
 const restaurants = await getCollection('restaurants');
 const bars = await getCollection('bars');
 const attractions = await getCollection('attractions');
 
-// Highest-rated 3 from each, so the homepage stays fresh as you add content
 const topRestaurants = [...restaurants].sort((a, b) => b.data.rating - a.data.rating).slice(0, 3);
 const topBars = [...bars].sort((a, b) => b.data.rating - a.data.rating).slice(0, 3);
 const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.rating).slice(0, 3);
@@ -25,13 +25,15 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
       </div>
       <ul class="listing-grid">
         {topRestaurants.map(r => (
-          <li class="listing-card">
-            <a href={`/restaurants/${r.id}`}>
-              <h3>{r.data.name}</h3>
-              <p>{r.data.category} — {r.data.area}</p>
-              <p>{r.data.priceRange} · ★ {r.data.rating}</p>
-            </a>
-          </li>
+          <ListingCard
+            href={`/restaurants/${r.id}`}
+            name={r.data.name}
+            category={r.data.category}
+            area={r.data.area}
+            rating={r.data.rating}
+            tags={r.data.tags}
+            priceRange={r.data.priceRange}
+          />
         ))}
       </ul>
     </section>
@@ -45,13 +47,15 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
       </div>
       <ul class="listing-grid">
         {topBars.map(b => (
-          <li class="listing-card">
-            <a href={`/bars/${b.id}`}>
-              <h3>{b.data.name}</h3>
-              <p>{b.data.category} — {b.data.area}</p>
-              <p>{b.data.priceRange} · ★ {b.data.rating}</p>
-            </a>
-          </li>
+          <ListingCard
+            href={`/bars/${b.id}`}
+            name={b.data.name}
+            category={b.data.category}
+            area={b.data.area}
+            rating={b.data.rating}
+            tags={b.data.tags}
+            priceRange={b.data.priceRange}
+          />
         ))}
       </ul>
     </section>
@@ -65,13 +69,15 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
       </div>
       <ul class="listing-grid">
         {topAttractions.map(a => (
-          <li class="listing-card">
-            <a href={`/attractions/${a.id}`}>
-              <h3>{a.data.name}</h3>
-              <p>{a.data.category} — {a.data.area}</p>
-              <p>★ {a.data.rating}</p>
-            </a>
-          </li>
+          <ListingCard
+            href={`/attractions/${a.id}`}
+            name={a.data.name}
+            category={a.data.category}
+            area={a.data.area}
+            rating={a.data.rating}
+            tags={a.data.tags}
+            entryFee={a.data.entryFee}
+          />
         ))}
       </ul>
     </section>

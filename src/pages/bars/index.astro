@@ -1,9 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ListingCard from '../../components/ListingCard.astro';
 
 const allBars = await getCollection('bars');
-
 const categories = [...new Set(allBars.map(b => b.data.category))].sort();
 const areas = [...new Set(allBars.map(b => b.data.area))].sort();
 const allTags = [...new Set(allBars.flatMap(b => b.data.tags))].sort();
@@ -19,7 +19,6 @@ const allTags = [...new Set(allBars.flatMap(b => b.data.tags))].sort();
         {categories.map(c => <option value={c}>{c}</option>)}
       </select>
     </label>
-
     <label>
       Area
       <select id="filter-area">
@@ -27,7 +26,6 @@ const allTags = [...new Set(allBars.flatMap(b => b.data.tags))].sort();
         {areas.map(a => <option value={a}>{a}</option>)}
       </select>
     </label>
-
     <label>
       Tag
       <select id="filter-tag">
@@ -39,21 +37,16 @@ const allTags = [...new Set(allBars.flatMap(b => b.data.tags))].sort();
 
   <ul id="bar-list" class="listing-grid">
     {allBars.map(b => (
-      <li
-        class="listing-card"
-        data-category={b.data.category}
-        data-area={b.data.area}
-        data-tags={b.data.tags.join(',')}
-      >
-        <a href={`/bars/${b.id}`}>
-          <h2>{b.data.name}</h2>
-          <p>{b.data.category} — {b.data.area}</p>
-          <p>{b.data.priceRange} · ★ {b.data.rating}</p>
-          <div class="tags">
-            {b.data.tags.map(tag => <span class="tag">{tag}</span>)}
-          </div>
-        </a>
-      </li>
+      <ListingCard
+        href={`/bars/${b.id}`}
+        name={b.data.name}
+        category={b.data.category}
+        area={b.data.area}
+        rating={b.data.rating}
+        tags={b.data.tags}
+        priceRange={b.data.priceRange}
+        filterable={true}
+      />
     ))}
   </ul>
 </BaseLayout>
@@ -73,7 +66,6 @@ const allTags = [...new Set(allBars.flatMap(b => b.data.tags))].sort();
       const matchesCategory = !category || card.dataset.category === category;
       const matchesArea = !area || card.dataset.area === area;
       const matchesTag = !tag || card.dataset.tags?.split(',').includes(tag);
-
       card.style.display = (matchesCategory && matchesArea && matchesTag) ? '' : 'none';
     });
   }

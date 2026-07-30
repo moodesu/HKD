@@ -1,9 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ListingCard from '../../components/ListingCard.astro';
 
 const allRestaurants = await getCollection('restaurants');
-
 const categories = [...new Set(allRestaurants.map(r => r.data.category))].sort();
 const areas = [...new Set(allRestaurants.map(r => r.data.area))].sort();
 const allTags = [...new Set(allRestaurants.flatMap(r => r.data.tags))].sort();
@@ -19,7 +19,6 @@ const allTags = [...new Set(allRestaurants.flatMap(r => r.data.tags))].sort();
         {categories.map(c => <option value={c}>{c}</option>)}
       </select>
     </label>
-
     <label>
       Area
       <select id="filter-area">
@@ -27,7 +26,6 @@ const allTags = [...new Set(allRestaurants.flatMap(r => r.data.tags))].sort();
         {areas.map(a => <option value={a}>{a}</option>)}
       </select>
     </label>
-
     <label>
       Tag
       <select id="filter-tag">
@@ -39,21 +37,16 @@ const allTags = [...new Set(allRestaurants.flatMap(r => r.data.tags))].sort();
 
   <ul id="restaurant-list" class="listing-grid">
     {allRestaurants.map(r => (
-      <li
-        class="listing-card"
-        data-category={r.data.category}
-        data-area={r.data.area}
-        data-tags={r.data.tags.join(',')}
-      >
-        <a href={`/restaurants/${r.id}`}>
-          <h2>{r.data.name}</h2>
-          <p>{r.data.category} — {r.data.area}</p>
-          <p>{r.data.priceRange} · ★ {r.data.rating}</p>
-          <div class="tags">
-            {r.data.tags.map(tag => <span class="tag">{tag}</span>)}
-          </div>
-        </a>
-      </li>
+      <ListingCard
+        href={`/restaurants/${r.id}`}
+        name={r.data.name}
+        category={r.data.category}
+        area={r.data.area}
+        rating={r.data.rating}
+        tags={r.data.tags}
+        priceRange={r.data.priceRange}
+        filterable={true}
+      />
     ))}
   </ul>
 </BaseLayout>
@@ -73,7 +66,6 @@ const allTags = [...new Set(allRestaurants.flatMap(r => r.data.tags))].sort();
       const matchesCategory = !category || card.dataset.category === category;
       const matchesArea = !area || card.dataset.area === area;
       const matchesTag = !tag || card.dataset.tags?.split(',').includes(tag);
-
       card.style.display = (matchesCategory && matchesArea && matchesTag) ? '' : 'none';
     });
   }
