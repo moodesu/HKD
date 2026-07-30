@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import InfoCard from '../../components/InfoCard.astro';
 
 export async function getStaticPaths() {
   const restaurants = await getCollection('restaurants');
@@ -13,33 +14,35 @@ export async function getStaticPaths() {
 
 const { restaurant } = Astro.props;
 const { Content } = await render(restaurant);
+
+const fields = [
+  { label: 'Category', value: restaurant.data.category },
+  { label: 'Area', value: restaurant.data.area },
+  { label: 'Price', value: restaurant.data.priceRange },
+  { label: 'Hours', value: restaurant.data.hours },
+  { label: 'Address', value: restaurant.data.address },
+  { label: 'Rating', value: `${restaurant.data.rating} / 5` },
+];
 ---
 <BaseLayout title={restaurant.data.name} description={restaurant.data.name} image={restaurant.data.image}>
-  <article data-pagefind-body>
-    <h1>{restaurant.data.name}</h1>
+  <article data-pagefind-body class="detail-page">
+    <nav class="breadcrumb">
+      <a href="/">Home</a> / <a href="/restaurants">Restaurants</a> / {restaurant.data.name}
+    </nav>
+
+    <header class="detail-header">
+      <h1>{restaurant.data.name}</h1>
+      <div class="tags">
+        {restaurant.data.tags.map(tag => <span class="tag">{tag}</span>)}
+      </div>
+    </header>
 
     {restaurant.data.image && (
-      <Image
-        src={restaurant.data.image}
-        alt={restaurant.data.name}
-        width={800}
-        height={500}
-        class="detail-hero"
-      />
+      <Image src={restaurant.data.image} alt={restaurant.data.name} width={800} height={500} class="detail-hero" />
     )}
 
-    <p><strong>{restaurant.data.category}</strong> — {restaurant.data.area}</p>
-
-    <ul>
-      <li>Price: {restaurant.data.priceRange}</li>
-      <li>Hours: {restaurant.data.hours}</li>
-      <li>Address: {restaurant.data.address}</li>
-      <li>Rating: {restaurant.data.rating} / 5</li>
-    </ul>
-
-    <div class="tags">
-      {restaurant.data.tags.map(tag => <span class="tag">{tag}</span>)}
-    </div>
+    {/* TODO: replace auto-generated description below with a manually written summary per entry */}
+    <InfoCard description={`A ${restaurant.data.category} spot in ${restaurant.data.area}.`} fields={fields} />
 
     <div class="review-body">
       <Content />

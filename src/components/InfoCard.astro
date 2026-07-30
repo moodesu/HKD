@@ -1,0 +1,27 @@
+---
+interface Field {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  description: string;
+  fields: Field[];
+}
+
+const { description, fields } = Astro.props;
+---
+<div class="info-card">
+  <div class="info-card-summary">
+    <h2>Summary</h2>
+    <p>{description}</p>
+  </div>
+  <div class="info-card-fields">
+    {fields.map(field => (
+      <div class="info-field">
+        <span class="info-label">{field.label}</span>
+        <span class="info-value">{field.value}</span>
+      </div>
+    ))}
+  </div>
+</div>

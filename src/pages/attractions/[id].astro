@@ -1,6 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import InfoCard from '../../components/InfoCard.astro';
 
 export async function getStaticPaths() {
   const attractions = await getCollection('attractions');
@@ -12,22 +14,35 @@ export async function getStaticPaths() {
 
 const { attraction } = Astro.props;
 const { Content } = await render(attraction);
+
+const fields = [
+  { label: 'Category', value: attraction.data.category },
+  { label: 'Area', value: attraction.data.area },
+  { label: 'Opening Hours', value: attraction.data.openingHours },
+  { label: 'Entry Fee', value: attraction.data.entryFee },
+  { label: 'Address', value: attraction.data.address },
+  { label: 'Rating', value: `${attraction.data.rating} / 5` },
+];
 ---
-<BaseLayout title={attraction.data.name} description={attraction.data.name}>
-  <article data-pagefind-body>
-    <h1>{attraction.data.name}</h1>
-    <p><strong>{attraction.data.category}</strong> — {attraction.data.area}</p>
+<BaseLayout title={attraction.data.name} description={attraction.data.name} image={attraction.data.image}>
+  <article data-pagefind-body class="detail-page">
+    <nav class="breadcrumb">
+      <a href="/">Home</a> / <a href="/attractions">Attractions</a> / {attraction.data.name}
+    </nav>
 
-    <ul>
-      <li>Opening Hours: {attraction.data.openingHours}</li>
-      <li>Entry Fee: {attraction.data.entryFee}</li>
-      <li>Address: {attraction.data.address}</li>
-      <li>Rating: {attraction.data.rating} / 5</li>
-    </ul>
+    <header class="detail-header">
+      <h1>{attraction.data.name}</h1>
+      <div class="tags">
+        {attraction.data.tags.map(tag => <span class="tag">{tag}</span>)}
+      </div>
+    </header>
 
-    <div class="tags">
-      {attraction.data.tags.map(tag => <span class="tag">{tag}</span>)}
-    </div>
+    {attraction.data.image && (
+      <Image src={attraction.data.image} alt={attraction.data.name} width={800} height={500} class="detail-hero" />
+    )}
+
+    {/* TODO: replace auto-generated description below with a manually written summary per entry */}
+    <InfoCard description={`A ${attraction.data.category} in ${attraction.data.area}.`} fields={fields} />
 
     <div class="review-body">
       <Content />

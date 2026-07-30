@@ -1,6 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import InfoCard from '../../components/InfoCard.astro';
 
 export async function getStaticPaths() {
   const bars = await getCollection('bars');
@@ -12,25 +14,38 @@ export async function getStaticPaths() {
 
 const { bar } = Astro.props;
 const { Content } = await render(bar);
+
+const fields = [
+  { label: 'Category', value: bar.data.category },
+  { label: 'Area', value: bar.data.area },
+  { label: 'Price', value: bar.data.priceRange },
+  ...(bar.data.happyHour ? [{ label: 'Happy Hour', value: bar.data.happyHour }] : []),
+  { label: 'Address', value: bar.data.address },
+  { label: 'Rating', value: `${bar.data.rating} / 5` },
+];
 ---
-<BaseLayout title={bar.data.name} description={bar.data.name}>
-  <article data-pagefind-body>
-    <h1>{bar.data.name}</h1>
-    <p><strong>{bar.data.category}</strong> — {bar.data.area}</p>
+<BaseLayout title={bar.data.name} description={bar.data.name} image={bar.data.image}>
+  <article data-pagefind-body class="detail-page">
+    <nav class="breadcrumb">
+      <a href="/">Home</a> / <a href="/bars">Bars</a> / {bar.data.name}
+    </nav>
 
-    <ul>
-      <li>Price: {bar.data.priceRange}</li>
-      {bar.data.happyHour && <li>Happy Hour: {bar.data.happyHour}</li>}
-      <li>Address: {bar.data.address}</li>
-      <li>Rating: {bar.data.rating} / 5</li>
-    </ul>
+    <header class="detail-header">
+      <h1>{bar.data.name}</h1>
+      <div class="tags">
+        {bar.data.tags.map(tag => <span class="tag">{tag}</span>)}
+      </div>
+    </header>
 
-    <div class="tags">
-      {bar.data.tags.map(tag => <span class="tag">{tag}</span>)}
-    </div>
+    {bar.data.image && (
+      <Image src={bar.data.image} alt={bar.data.name} width={800} height={500} class="detail-hero" />
+    )}
+
+    {/* TODO: replace auto-generated description below with a manually written summary per entry */}
+    <InfoCard description={`A ${bar.data.category} in ${bar.data.area}.`} fields={fields} />
 
     <div class="review-body">
       <Content />
     </div>
-</article>
+  </article>
 </BaseLayout>
