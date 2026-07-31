@@ -1,16 +1,82 @@
 ---
+import SearchBox from './SearchBox.astro';
+
 const navItems = [
   { label: "Home", href: "/" },
   { label: "Restaurants", href: "/restaurants" },
   { label: "Bars", href: "/bars" },
   { label: "Attractions", href: "/attractions" },
 ];
-import SearchBox from './SearchBox.astro';
 ---
 <header class="site-header">
-  <a href="/" class="logo">Hakodate Guide</a>
-  <nav>
+  <div class="site-header-row">
+    <a href="/" class="logo">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="logo-icon">
+        <path d="M27 58 L29 34 L35 34 L37 58 Z" fill="currentColor"/>
+        <path d="M20 30 L26 20 L38 20 L44 30 L38 32 L26 32 Z" fill="currentColor"/>
+        <path d="M25 20 L39 20 L39 17 L25 17 Z" fill="currentColor"/>
+      </svg>
+      <span>Hakodate Guide</span>
+    </a>
+
+    <button id="nav-toggle" class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="site-nav">
+      {navItems.map(item => <a href={item.href}>{item.label}</a>)}
+    </nav>
+
+    <div class="header-search">
+      <SearchBox />
+    </div>
+  </div>
+</header>
+
+<div id="nav-backdrop" class="nav-backdrop"></div>
+
+<div id="nav-drawer" class="nav-drawer">
+  <button id="nav-drawer-close" class="nav-drawer-close" aria-label="Close menu">✕</button>
+  <nav class="nav-drawer-links">
     {navItems.map(item => <a href={item.href}>{item.label}</a>)}
   </nav>
-  <SearchBox />
-</header>
+  <div class="nav-drawer-search">
+    <SearchBox />
+  </div>
+</div>
+
+<script is:inline>
+  const toggle = document.getElementById('nav-toggle');
+  const drawer = document.getElementById('nav-drawer');
+  const backdrop = document.getElementById('nav-backdrop');
+  const closeBtn = document.getElementById('nav-drawer-close');
+
+  function openDrawer() {
+    drawer.classList.add('open');
+    backdrop.classList.add('open');
+    toggle.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    backdrop.classList.remove('open');
+    toggle.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', () => {
+    if (drawer.classList.contains('open')) {
+      closeDrawer();
+    } else {
+      openDrawer();
+    }
+  });
+
+  closeBtn.addEventListener('click', closeDrawer);
+  backdrop.addEventListener('click', closeDrawer);
+</script>
