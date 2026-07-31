@@ -36,7 +36,9 @@ const fields = [
       <h1>{attraction.data.name}</h1>
       <div class="tags">
   {attraction.data.tags.map(tag => (
-    <a href={`/tags/${tag}`} class="tag" data-pagefind-filter="tag">{tag}</a>
+    <>
+      <a href={`/tags/${tag}`} class="tag" data-pagefind-filter="tag">{tag}</a>{' '}
+    </>
   ))}
 </div>
     </header>

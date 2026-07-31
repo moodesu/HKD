@@ -1,12 +1,14 @@
 <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="32" cy="32" r="32" fill="#1a1a1a"/>
+  <circle cx="32" cy="32" r="32" fill="#1e222a"/>
 
-  <!-- slender tapered shaft -->
-  <path d="M29 58 L30 32 L34 32 L35 58 Z" fill="#fafaf8"/>
+  <!-- tapered shaft -->
+  <path d="M27 56 L28 26 L36 26 L37 56 Z" fill="#fafaf8"/>
 
-  <!-- wide flared pod, flat top -->
-  <path d="M20 30 L26 20 L38 20 L44 30 L38 32 L26 32 Z" fill="#fafaf8"/>
+  <!-- neck -->
+  <path d="M25 26 L27 20 L37 20 L39 26 Z" fill="#fafaf8"/>
 
-  <!-- flat roof cap -->
-  <path d="M25 20 L39 20 L39 17 L25 17 Z" fill="#fafaf8"/>
+  <!-- pentagon observation deck, banded -->
+  <path d="M32 8 L48 18 L42 26 L22 26 L16 18 Z" fill="#fafaf8"/>
+  <path d="M32 8 L48 18 L45.5 21.5 L32 13 L18.5 21.5 L16 18 Z" fill="#b5482e"/>
+  <path d="M32 13 L45.5 21.5 L43.5 24 L32 16.5 L20.5 24 L18.5 21.5 Z" fill="#fafaf8"/>
 </svg>
