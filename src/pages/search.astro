@@ -2,10 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout title="Search" description="Search Hakodate Guide">
-  <h1>Search Results</h1>
-  <p id="search-query-display"></p>
-  <ul id="full-search-results" class="listing-grid"></ul>
-  <p id="no-results" style="display:none;">No results found.</p>
+  <div class="detail-page">
+    <h1 id="search-query-display">Search Results</h1>
+    <ul id="full-search-results" class="listing-grid"></ul>
+    <p id="no-results" style="display:none;">No results found.</p>
+  </div>
 </BaseLayout>
 
 <script is:inline>
@@ -14,12 +15,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const term = params.get('q') || '';
 
     document.getElementById('search-query-display').textContent = term
-      ? `Showing results for "${term}"`
-      : '';
+      ? `Results for "${term}"`
+      : 'Search';
 
     if (!term) return;
 
-    const pagefind = await import('/pagefind/pagefind.js');
+    const pagefind = await import(/* @vite-ignore */ '/pagefind/pagefind.js');
     await pagefind.init();
 
     const search = await pagefind.search(term);
@@ -35,10 +36,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const data = await result.data();
       const li = document.createElement('li');
       li.className = 'listing-card';
+
+      const imageBlock = data.meta.image
+        ? `<div class="card-image"><img src="${data.meta.image}" alt="${data.meta.title}" loading="lazy" /></div>`
+        : `<div class="card-image"><div class="card-image-placeholder"></div></div>`;
+
+      const tagList = data.filters.tag || [];
+      const tagsBlock = tagList.length > 0
+        ? `<div class="tags">${tagList.map(t => `<span class="tag">${t}</span>`).join('')}</div>`
+        : '';
+
       li.innerHTML = `
         <a href="${data.url}">
-          <h2>${data.meta.title}</h2>
-          <p>${data.excerpt}</p>
+          ${imageBlock}
+          <div class="card-body">
+            <h2>${data.meta.title}</h2>
+            <p>${data.excerpt}</p>
+            ${tagsBlock}
+          </div>
         </a>
       `;
       resultsList.appendChild(li);

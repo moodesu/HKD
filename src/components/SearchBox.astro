@@ -1,73 +1,23 @@
+---
+interface Props {
+  instanceId?: string;
+}
+const { instanceId = 'default' } = Astro.props;
+---
 <div class="search-box">
-  <input type="text" id="search-input" placeholder="Search restaurants, bars, attractions..." />
-  <ul id="search-results"></ul>
+  <input type="text" id={`search-input-${instanceId}`} placeholder="Search restaurants, bars, attractions..." />
 </div>
 
-<script is:inline>
-  async function initSearch() {
-    const pagefind = await import('/pagefind/pagefind.js');
-    await pagefind.init();
+<script define:vars={{ instanceId }} is:inline>
+  const input = document.getElementById(`search-input-${instanceId}`);
 
-    const input = document.getElementById('search-input');
-    const resultsList = document.getElementById('search-results');
-
-    let debounceTimer;
-    let currentResults = [];
-
-    async function runSearch(term) {
-      resultsList.innerHTML = '';
-      currentResults = [];
-
-      if (!term) return;
-
-      const search = await pagefind.search(term);
-
-      for (const result of search.results.slice(0, 8)) {
-        const data = await result.data();
-        currentResults.push(data);
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <a href="${data.url}">
-            <strong>${data.meta.title}</strong>
-            <p>${data.excerpt}</p>
-          </a>
-        `;
-        resultsList.appendChild(li);
-      }
-    }
-
-    input.addEventListener('input', () => {
-      clearTimeout(debounceTimer);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
       const term = input.value.trim();
-      debounceTimer = setTimeout(() => runSearch(term), 200);
-    });
-
-    // Pressing Enter jumps to the top result
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && currentResults.length > 0) {
-        e.preventDefault();
-        window.location.href = currentResults[0].url;
+      if (term) {
+        window.location.href = `/search?q=${encodeURIComponent(term)}`;
       }
-    });
-
-    // Close dropdown when clicking outside the search box
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.search-box')) {
-        resultsList.innerHTML = '';
-      }
-    });
-
-   // Pressing Enter goes to the full search results page
-input.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    const term = input.value.trim();
-    if (term) {
-      window.location.href = `/search?q=${encodeURIComponent(term)}`;
     }
-  }
-});
-  }
-
-  initSearch();
+  });
 </script>

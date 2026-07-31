@@ -35,7 +35,7 @@ const fields = [
     <header class="detail-header">
       <h1>{bar.data.name}</h1>
      <div class="tags">
-  {bar.data.tags.map(tag => <a href={`/tags/${tag}`} class="tag">{tag}</a>)}
+  {bar.data.tags.map(tag => <a href={`/tags/${tag}`} class="tag" data-pagefind-filter="tag">{tag}</a>)}
 </div>
     </header>
 
@@ -44,7 +44,9 @@ const fields = [
     )}
 
     {/* TODO: replace auto-generated description below with a manually written summary per entry */}
-    <InfoCard description={`A ${bar.data.category} in ${bar.data.area}.`} fields={fields} />
+    <div data-pagefind-ignore>
+  <InfoCard description={`A ${bar.data.category} spot in ${bar.data.area}.`} fields={fields} />
+</div>
 
     <div class="review-card">
       <h2>The Review</h2>

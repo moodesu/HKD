@@ -30,7 +30,7 @@ const navItems = [
     </nav>
 
     <div class="header-search">
-      <SearchBox />
+      <SearchBox instanceId="header" />
     </div>
   </div>
 </header>
@@ -43,7 +43,7 @@ const navItems = [
     {navItems.map(item => <a href={item.href}>{item.label}</a>)}
   </nav>
   <div class="nav-drawer-search">
-    <SearchBox />
+    <SearchBox instanceId="drawer" />
   </div>
 </div>
 
