@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ListingCard from '../../components/ListingCard.astro';
 import Hero from '../../components/Hero.astro';
-// Once you have the photo: import restaurantsHero from '../../assets/hero/restaurants.jpg';
+import restaurantsHero from '../../assets/hero/restaurants.jpg';
 
 const allRestaurants = await getCollection('restaurants');
 const categories = [...new Set(allRestaurants.map(r => r.data.category))].sort();
@@ -11,7 +11,7 @@ const areas = [...new Set(allRestaurants.map(r => r.data.area))].sort();
 const allTags = [...new Set(allRestaurants.flatMap(r => r.data.tags))].sort();
 ---
 <BaseLayout title="Restaurants" description="Restaurants in and around Hakodate">
-  <Hero title="Restaurants" subtitle="Where to eat around Hakodate" />
+  <Hero title="Restaurants" subtitle="Where to eat around Hakodate" image={restaurantsHero} />
 
   <div class="filters">
     <label>

@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ListingCard from '../components/ListingCard.astro';
 import Hero from '../components/Hero.astro';
-// Once you have the photo: import homepageHero from '../assets/hero/homepage.jpg';
+import homepageHero from '../assets/hero/homepage.jpg';
 
 const restaurants = await getCollection('restaurants');
 const bars = await getCollection('bars');
@@ -15,9 +15,10 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
 ---
 <BaseLayout title="Home" description="A local guide to Hakodate — restaurants, bars, and attractions">
   <Hero
-    title="Hakodate Guide"
-    subtitle="Restaurants, bars, and attractions in and around Hakodate, Hokkaido — picked and reviewed locally."
-  />
+  title="Hakodate Guide"
+  subtitle="Restaurants, bars, and attractions in and around Hakodate, Hokkaido — picked and reviewed locally."
+  image={homepageHero}
+/>
 
   {topRestaurants.length > 0 && (
     <section class="featured">

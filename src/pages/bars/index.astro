@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ListingCard from '../../components/ListingCard.astro';
 import Hero from '../../components/Hero.astro';
-// Once you have the photo: import barsHero from '../../assets/hero/bars.jpg';
+import barsHero from '../../assets/hero/bars.jpg';
 
 const allBars = await getCollection('bars');
 const categories = [...new Set(allBars.map(b => b.data.category))].sort();
@@ -11,7 +11,7 @@ const areas = [...new Set(allBars.map(b => b.data.area))].sort();
 const allTags = [...new Set(allBars.flatMap(b => b.data.tags))].sort();
 ---
 <BaseLayout title="Bars" description="Bars in and around Hakodate">
-  <Hero title="Bars" subtitle="Where to drink around Hakodate" />
+  <Hero title="Bars" subtitle="Where to drink around Hakodate" image={barsHero} />
 
   <div class="filters">
     <label>
