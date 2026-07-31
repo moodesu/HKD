@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ListingCard from '../../components/ListingCard.astro';
+import Hero from '../../components/Hero.astro';
+// Once you have the photo: import attractionsHero from '../../assets/hero/attractions.jpg';
 
 const allAttractions = await getCollection('attractions');
 const categories = [...new Set(allAttractions.map(a => a.data.category))].sort();
@@ -9,7 +11,7 @@ const areas = [...new Set(allAttractions.map(a => a.data.area))].sort();
 const allTags = [...new Set(allAttractions.flatMap(a => a.data.tags))].sort();
 ---
 <BaseLayout title="Attractions" description="Attractions in and around Hakodate">
-  <h1>Attractions</h1>
+  <Hero title="Attractions" subtitle="Places to see around Hakodate" />
 
   <div class="filters">
     <label>
@@ -35,8 +37,8 @@ const allTags = [...new Set(allAttractions.flatMap(a => a.data.tags))].sort();
     </label>
   </div>
 
-  <ul id="attraction-list" class="listing-grid">
-    {allAttractions.map(a => (
+  <ul id="attraction-list" class="featured-grid">
+    {allAttractions.map((a, i) => (
       <ListingCard
         href={`/attractions/${a.id}`}
         name={a.data.name}
@@ -45,8 +47,9 @@ const allTags = [...new Set(allAttractions.flatMap(a => a.data.tags))].sort();
         rating={a.data.rating}
         tags={a.data.tags}
         entryFee={a.data.entryFee}
-        filterable={true}
         image={a.data.image}
+        filterable={true}
+        featured={i === 0}
       />
     ))}
   </ul>

@@ -15,7 +15,7 @@ interface Props {
   filterable?: boolean;
 }
 
-const { href, name, category, area, rating, tags, priceRange, entryFee, image, filterable = false } = Astro.props;
+const { href, name, category, area, rating, tags, priceRange, entryFee, image, filterable = false, featured = false } = Astro.props;
 ---
 <li
   class="listing-card"
@@ -27,6 +27,34 @@ const { href, name, category, area, rating, tags, priceRange, entryFee, image, f
     <div class="card-image">
       {image ? (
         <Image src={image} alt={name} width={400} height={300} />
+      ) : (
+        <div class="card-image-placeholder"></div>
+      )}
+    </div>
+    <div class="card-body">
+      <h2>{name}</h2>
+      <p>{category} — {area}</p>
+      <p>
+        {priceRange && <>{priceRange} · </>}
+        {entryFee && <>{entryFee} · </>}
+        ★ {rating}
+      </p>
+      <div class="tags">
+        {tags.map(tag => <span class="tag">{tag}</span>)}
+      </div>
+    </div>
+  </a>
+</li>
+<li
+  class={`listing-card ${featured ? 'featured' : ''}`}
+  data-category={filterable ? category : undefined}
+  data-area={filterable ? area : undefined}
+  data-tags={filterable ? tags.join(',') : undefined}
+>
+  <a href={href}>
+    <div class="card-image">
+      {image ? (
+        <Image src={image} alt={name} width={featured ? 700 : 400} height={featured ? 500 : 300} />
       ) : (
         <div class="card-image-placeholder"></div>
       )}

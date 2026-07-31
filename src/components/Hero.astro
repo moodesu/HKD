@@ -1,0 +1,23 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro:assets';
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  image?: ImageMetadata;
+}
+
+const { title, subtitle, image } = Astro.props;
+---
+<div class="site-hero">
+  {image ? (
+    <Image src={image} alt={title} width={1200} height={400} class="site-hero-img" />
+  ) : (
+    <div class="site-hero-placeholder"></div>
+  )}
+  <div class="site-hero-content">
+    <h1>{title}</h1>
+    {subtitle && <p>{subtitle}</p>}
+  </div>
+</div>

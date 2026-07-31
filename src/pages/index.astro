@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ListingCard from '../components/ListingCard.astro';
+import Hero from '../components/Hero.astro';
+// Once you have the photo: import homepageHero from '../assets/hero/homepage.jpg';
 
 const restaurants = await getCollection('restaurants');
 const bars = await getCollection('bars');
@@ -12,10 +14,10 @@ const topBars = [...bars].sort((a, b) => b.data.rating - a.data.rating).slice(0,
 const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.rating).slice(0, 3);
 ---
 <BaseLayout title="Home" description="A local guide to Hakodate — restaurants, bars, and attractions">
-  <section class="hero">
-    <h1>Hakodate Guide</h1>
-    <p>Restaurants, bars, and attractions in and around Hakodate, Hokkaido — picked and reviewed locally.</p>
-  </section>
+  <Hero
+    title="Hakodate Guide"
+    subtitle="Restaurants, bars, and attractions in and around Hakodate, Hokkaido — picked and reviewed locally."
+  />
 
   {topRestaurants.length > 0 && (
     <section class="featured">
@@ -23,8 +25,8 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
         <h2>Top Restaurants</h2>
         <a href="/restaurants">See all →</a>
       </div>
-      <ul class="listing-grid">
-        {topRestaurants.map(r => (
+      <ul class="featured-grid">
+        {topRestaurants.map((r, i) => (
           <ListingCard
             href={`/restaurants/${r.id}`}
             name={r.data.name}
@@ -34,6 +36,7 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
             tags={r.data.tags}
             priceRange={r.data.priceRange}
             image={r.data.image}
+            featured={i === 0}
           />
         ))}
       </ul>
@@ -46,8 +49,8 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
         <h2>Top Bars</h2>
         <a href="/bars">See all →</a>
       </div>
-      <ul class="listing-grid">
-        {topBars.map(b => (
+      <ul class="featured-grid">
+        {topBars.map((b, i) => (
           <ListingCard
             href={`/bars/${b.id}`}
             name={b.data.name}
@@ -57,6 +60,7 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
             tags={b.data.tags}
             priceRange={b.data.priceRange}
             image={b.data.image}
+            featured={i === 0}
           />
         ))}
       </ul>
@@ -69,8 +73,8 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
         <h2>Top Attractions</h2>
         <a href="/attractions">See all →</a>
       </div>
-      <ul class="listing-grid">
-        {topAttractions.map(a => (
+      <ul class="featured-grid">
+        {topAttractions.map((a, i) => (
           <ListingCard
             href={`/attractions/${a.id}`}
             name={a.data.name}
@@ -80,6 +84,7 @@ const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.ra
             tags={a.data.tags}
             entryFee={a.data.entryFee}
             image={a.data.image}
+            featured={i === 0}
           />
         ))}
       </ul>
