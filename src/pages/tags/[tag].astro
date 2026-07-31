@@ -1,0 +1,93 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ListingCard from '../../components/ListingCard.astro';
+
+export async function getStaticPaths() {
+  const restaurants = await getCollection('restaurants');
+  const bars = await getCollection('bars');
+  const attractions = await getCollection('attractions');
+
+  const allTags = new Set<string>();
+  [...restaurants, ...bars, ...attractions].forEach(entry => {
+    entry.data.tags.forEach(tag => allTags.add(tag));
+  });
+
+  return [...allTags].map(tag => ({
+    params: { tag },
+  }));
+}
+
+const { tag } = Astro.params;
+
+const restaurants = (await getCollection('restaurants')).filter(r => r.data.tags.includes(tag!));
+const bars = (await getCollection('bars')).filter(b => b.data.tags.includes(tag!));
+const attractions = (await getCollection('attractions')).filter(a => a.data.tags.includes(tag!));
+---
+<BaseLayout title={`Tagged "${tag}"`} description={`Places tagged ${tag} in Hakodate`}>
+  <nav class="breadcrumb">
+    <a href="/">Home</a> / Tagged "{tag}"
+  </nav>
+
+  <h1>Tagged: {tag}</h1>
+
+  {restaurants.length > 0 && (
+    <section class="featured">
+      <h2>Restaurants</h2>
+      <ul class="listing-grid">
+        {restaurants.map(r => (
+          <ListingCard
+            href={`/restaurants/${r.id}`}
+            name={r.data.name}
+            category={r.data.category}
+            area={r.data.area}
+            rating={r.data.rating}
+            tags={r.data.tags}
+            priceRange={r.data.priceRange}
+            image={r.data.image}
+          />
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {bars.length > 0 && (
+    <section class="featured">
+      <h2>Bars</h2>
+      <ul class="listing-grid">
+        {bars.map(b => (
+          <ListingCard
+            href={`/bars/${b.id}`}
+            name={b.data.name}
+            category={b.data.category}
+            area={b.data.area}
+            rating={b.data.rating}
+            tags={b.data.tags}
+            priceRange={b.data.priceRange}
+            image={b.data.image}
+          />
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {attractions.length > 0 && (
+    <section class="featured">
+      <h2>Attractions</h2>
+      <ul class="listing-grid">
+        {attractions.map(a => (
+          <ListingCard
+            href={`/attractions/${a.id}`}
+            name={a.data.name}
+            category={a.data.category}
+            area={a.data.area}
+            rating={a.data.rating}
+            tags={a.data.tags}
+            entryFee={a.data.entryFee}
+            image={a.data.image}
+          />
+        ))}
+      </ul>
+    </section>
+  )}
+</BaseLayout>

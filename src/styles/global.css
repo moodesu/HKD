@@ -510,3 +510,12 @@ main {
   font-weight: 600;
   margin-bottom: 1rem;
 }
+a.tag {
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+a.tag:hover {
+  background: var(--color-accent);
+  color: var(--color-surface);
+}

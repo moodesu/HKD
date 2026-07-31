@@ -3,6 +3,8 @@ import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import InfoCard from '../../components/InfoCard.astro';
+import MapEmbed from '../../components/MapEmbed.astro';
+import RelatedPlaces from '../../components/RelatedPlaces.astro';
 
 export async function getStaticPaths() {
   const attractions = await getCollection('attractions');
@@ -33,8 +35,8 @@ const fields = [
     <header class="detail-header">
       <h1>{attraction.data.name}</h1>
       <div class="tags">
-        {attraction.data.tags.map(tag => <span class="tag">{tag}</span>)}
-      </div>
+  {attraction.data.tags.map(tag => <a href={`/tags/${tag}`} class="tag">{tag}</a>)}
+</div>
     </header>
 
     {attraction.data.image && (
@@ -44,11 +46,20 @@ const fields = [
     {/* TODO: replace auto-generated description below with a manually written summary per entry */}
     <InfoCard description={`A ${attraction.data.category} in ${attraction.data.area}.`} fields={fields} />
 
-<div class="review-card">
-  <h2>The Review</h2>
-  <div class="review-body">
-    <Content />
-  </div>
-</div>
+    <div class="review-card">
+      <h2>The Review</h2>
+      <div class="review-body">
+        <Content />
+      </div>
+    </div>
+
+    <MapEmbed address={attraction.data.address} name={attraction.data.name} />
+
+    <RelatedPlaces
+      collection="attractions"
+      currentId={attraction.id}
+      area={attraction.data.area}
+      category={attraction.data.category}
+    />
   </article>
 </BaseLayout>
