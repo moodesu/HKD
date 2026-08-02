@@ -2,8 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ListingCard from '../components/ListingCard.astro';
-import Hero from '../components/Hero.astro';
-import homepageHero from '../assets/hero/homepage.jpg';
+import HeroCarousel from '../components/HeroCarousel.astro';
 
 const restaurants = await getCollection('restaurants');
 const bars = await getCollection('bars');
@@ -12,13 +11,15 @@ const attractions = await getCollection('attractions');
 const topRestaurants = [...restaurants].sort((a, b) => b.data.rating - a.data.rating).slice(0, 3);
 const topBars = [...bars].sort((a, b) => b.data.rating - a.data.rating).slice(0, 3);
 const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.rating).slice(0, 3);
+
+const carouselSlides = [
+  ...topRestaurants.map(r => ({ name: r.data.name, category: 'Restaurant', href: `/restaurants/${r.id}`, image: r.data.image })),
+  ...topBars.map(b => ({ name: b.data.name, category: 'Bar', href: `/bars/${b.id}`, image: b.data.image })),
+  ...topAttractions.map(a => ({ name: a.data.name, category: 'Attraction', href: `/attractions/${a.id}`, image: a.data.image })),
+].filter(slide => slide.image);
 ---
 <BaseLayout title="Home" description="A local guide to Hakodate — restaurants, bars, and attractions">
-  <Hero
-  title="Hakodate Guide"
-  subtitle="Restaurants, bars, and attractions in and around Hakodate, Hokkaido — picked and reviewed locally."
-  image={homepageHero}
-/>
+  <HeroCarousel slides={carouselSlides} />
 
   {topRestaurants.length > 0 && (
     <section class="featured">

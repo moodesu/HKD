@@ -1,4 +1,4 @@
-:root {
+/*:root {
   --color-bg: #f5f7f6;
   --color-surface: #ffffff;
   --color-text: #1e222a;
@@ -6,6 +6,22 @@
   --color-accent: #b5482e;
   --color-accent-light: #f0dccb;
   --color-border: #e4d5c2;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --max-width: 1100px;
+}
+  */
+  
+:root {
+  --color-bg: #f5f7f6;
+  --color-surface: #ffffff;
+  --color-text: #1e222a;
+  
+  /* Palette 6: Crisp Amber & Slate */
+  --color-muted: #5c626e;          /* Clean slate-gray for crisp, highly readable metadata */
+  --color-accent: #c68a4c;         /* Rich Amber Gold for call-to-actions, map pins, and primary links */
+  --color-accent-light: #fdf8f3;   /* Warm cream tint for subtle button backgrounds and categories */
+  --color-border: #e6e9ed;         /* Light crisp slate border to perfectly lift the cards */
+  
   --font-body: 'Inter', system-ui, sans-serif;
   --max-width: 1100px;
 }
@@ -673,4 +689,140 @@ a.tag:hover {
   background: none;
   color: var(--color-text);
   font-weight: 600;
+}
+.hero-carousel {
+  position: relative;
+  height: 380px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.carousel-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.carousel-slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0) 55%);
+}
+
+.carousel-slide-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 1.5rem;
+  z-index: 1;
+}
+
+.carousel-slide-category {
+  display: inline-block;
+  color: #f0dccb;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}
+
+.carousel-slide-content h1 {
+  color: #faf6ef;
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.85);
+  color: var(--color-text);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-arrow:hover {
+  background: #ffffff;
+}
+
+.carousel-prev {
+  left: 1rem;
+}
+
+.carousel-next {
+  right: 1rem;
+}
+
+.carousel-dots {
+  position: absolute;
+  bottom: 1rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 0.4rem;
+  z-index: 2;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  padding: 0;
+}
+
+.carousel-dot.active {
+  background: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .hero-carousel {
+    height: 260px;
+  }
+
+  .carousel-slide-content h1 {
+    font-size: 1.4rem;
+  }
+
+  .carousel-arrow {
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+  }
 }

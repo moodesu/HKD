@@ -1,0 +1,97 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Slide {
+  name: string;
+  category: string;
+  href: string;
+  image: ImageMetadata;
+}
+
+interface Props {
+  slides: Slide[];
+}
+
+const { slides } = Astro.props;
+---
+<div class="hero-carousel" id="hero-carousel">
+  <div class="carousel-track">
+    {slides.map((slide, i) => (
+      <a href={slide.href} class={`carousel-slide ${i === 0 ? 'active' : ''}`} data-index={i}>
+        <Image src={slide.image} alt={slide.name} width={1200} height={450} />
+        <div class="carousel-slide-content">
+          <span class="carousel-slide-category">{slide.category}</span>
+          <h1>{slide.name}</h1>
+        </div>
+      </a>
+    ))}
+  </div>
+
+  <button class="carousel-arrow carousel-prev" aria-label="Previous">‹</button>
+  <button class="carousel-arrow carousel-next" aria-label="Next">›</button>
+
+  <div class="carousel-dots">
+    {slides.map((_, i) => (
+      <button class={`carousel-dot ${i === 0 ? 'active' : ''}`} data-index={i} aria-label={`Go to slide ${i + 1}`}></button>
+    ))}
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const carousel = document.getElementById('hero-carousel');
+    const slides = carousel.querySelectorAll('.carousel-slide');
+    const dots = carousel.querySelectorAll('.carousel-dot');
+    const prevBtn = carousel.querySelector('.carousel-prev');
+    const nextBtn = carousel.querySelector('.carousel-next');
+    let current = 0;
+    let timer;
+
+    function goTo(index) {
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = (index + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    function startAutoplay() {
+      timer = setInterval(next, 5000);
+    }
+
+    function stopAutoplay() {
+      clearInterval(timer);
+    }
+
+    nextBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      stopAutoplay();
+      next();
+      startAutoplay();
+    });
+
+    prevBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      stopAutoplay();
+      prev();
+      startAutoplay();
+    });
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        e.preventDefault();
+        stopAutoplay();
+        goTo(parseInt(dot.dataset.index));
+        startAutoplay();
+      });
+    });
+
+    if (slides.length > 1) {
+      startAutoplay();
+    }
+  })();
+</script>

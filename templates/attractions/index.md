@@ -7,6 +7,7 @@ address: ""
 category: ""
 openingHours: ""
 entryFee: ""
+image: ""
 ---
 
 Write the description/review here.
