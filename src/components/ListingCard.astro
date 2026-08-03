@@ -14,9 +14,10 @@ interface Props {
   image?: ImageMetadata;
   filterable?: boolean;
   featured?: boolean;
+  typeLabel?: string;
 }
 
-const { href, name, category, area, rating, tags, priceRange, entryFee, image, filterable = false, featured = false } = Astro.props;
+const { href, name, category, area, rating, tags, priceRange, entryFee, image, filterable = false, featured = false, typeLabel } = Astro.props;
 ---
 <li
   class={`listing-card ${featured ? 'featured' : ''}`}
@@ -26,6 +27,7 @@ const { href, name, category, area, rating, tags, priceRange, entryFee, image, f
 >
   <a href={href}>
     <div class="card-image">
+      {typeLabel && <span class="card-type-badge">{typeLabel}</span>}
       {image ? (
         <Image src={image} alt={name} width={featured ? 700 : 400} height={featured ? 500 : 300} />
       ) : (

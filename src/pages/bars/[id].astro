@@ -5,6 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import InfoCard from '../../components/InfoCard.astro';
 import MapEmbed from '../../components/MapEmbed.astro';
 import RelatedPlaces from '../../components/RelatedPlaces.astro';
+import BackToTop from '../../components/BackToTop.astro';
 
 export async function getStaticPaths() {
   const bars = await getCollection('bars');
@@ -28,19 +29,12 @@ const fields = [
 ---
 <BaseLayout title={bar.data.name} description={bar.data.name} image={bar.data.image}>
   <article data-pagefind-body class="detail-page">
-    <nav class="breadcrumb">
-      <a href="/">Home</a> / <a href="/bars">Bars</a> / {bar.data.name}
-    </nav>
 
     <header class="detail-header">
+      <div class="tags">
+        {bar.data.tags.map(tag => <a href={`/tags/${tag}`} class="tag">{tag}</a>)}
+      </div>
       <h1>{bar.data.name}</h1>
-     <div class="tags">
-  {bar.data.tags.map(tag => (
-    <>
-      <a href={`/tags/${tag}`} class="tag" data-pagefind-filter="tag">{tag}</a>{' '}
-    </>
-  ))}
-</div>
     </header>
 
     {bar.data.image && (
@@ -67,5 +61,14 @@ const fields = [
       area={bar.data.area}
       category={bar.data.category}
     />
+
+    <RelatedPlaces
+      collection="restaurants"
+      currentId={bar.id}
+      area={bar.data.area}
+      category={bar.data.category}
+    />
+
+    <BackToTop />
   </article>
 </BaseLayout>

@@ -17,79 +17,67 @@ const carouselSlides = [
   ...topBars.map(b => ({ name: b.data.name, category: 'Bar', href: `/bars/${b.id}`, image: b.data.image })),
   ...topAttractions.map(a => ({ name: a.data.name, category: 'Attraction', href: `/attractions/${a.id}`, image: a.data.image })),
 ].filter(slide => slide.image);
+
+const allEntries = [
+  ...restaurants.map(r => ({
+    href: `/restaurants/${r.id}`,
+    typeLabel: 'Restaurant',
+    name: r.data.name,
+    category: r.data.category,
+    area: r.data.area,
+    rating: r.data.rating,
+    tags: r.data.tags,
+    priceRange: r.data.priceRange as string | undefined,
+    entryFee: undefined as string | undefined,
+    image: r.data.image,
+  })),
+  ...bars.map(b => ({
+    href: `/bars/${b.id}`,
+    typeLabel: 'Bar',
+    name: b.data.name,
+    category: b.data.category,
+    area: b.data.area,
+    rating: b.data.rating,
+    tags: b.data.tags,
+    priceRange: b.data.priceRange as string | undefined,
+    entryFee: undefined as string | undefined,
+    image: b.data.image,
+  })),
+  ...attractions.map(a => ({
+    href: `/attractions/${a.id}`,
+    typeLabel: 'Attraction',
+    name: a.data.name,
+    category: a.data.category,
+    area: a.data.area,
+    rating: a.data.rating,
+    tags: a.data.tags,
+    priceRange: undefined as string | undefined,
+    entryFee: a.data.entryFee as string | undefined,
+    image: a.data.image,
+  })),
+].sort((a, b) => b.rating - a.rating);
 ---
 <BaseLayout title="Home" description="A local guide to Hakodate — restaurants, bars, and attractions">
   <HeroCarousel slides={carouselSlides} />
 
-  {topRestaurants.length > 0 && (
-    <section class="featured">
-      <div class="section-header">
-        <h2>Top Restaurants</h2>
-        <a href="/restaurants">See all →</a>
-      </div>
-      <ul class="featured-grid">
-        {topRestaurants.map((r, i) => (
-          <ListingCard
-            href={`/restaurants/${r.id}`}
-            name={r.data.name}
-            category={r.data.category}
-            area={r.data.area}
-            rating={r.data.rating}
-            tags={r.data.tags}
-            priceRange={r.data.priceRange}
-            image={r.data.image}
-            featured={i === 0}
-          />
-        ))}
-      </ul>
-    </section>
-  )}
+  <div class="section-header">
+    <h2>All places</h2>
+  </div>
 
-  {topBars.length > 0 && (
-    <section class="featured">
-      <div class="section-header">
-        <h2>Top Bars</h2>
-        <a href="/bars">See all →</a>
-      </div>
-      <ul class="featured-grid">
-        {topBars.map((b, i) => (
-          <ListingCard
-            href={`/bars/${b.id}`}
-            name={b.data.name}
-            category={b.data.category}
-            area={b.data.area}
-            rating={b.data.rating}
-            tags={b.data.tags}
-            priceRange={b.data.priceRange}
-            image={b.data.image}
-            featured={i === 0}
-          />
-        ))}
-      </ul>
-    </section>
-  )}
-
-  {topAttractions.length > 0 && (
-    <section class="featured">
-      <div class="section-header">
-        <h2>Top Attractions</h2>
-        <a href="/attractions">See all →</a>
-      </div>
-      <ul class="featured-grid">
-        {topAttractions.map((a, i) => (
-          <ListingCard
-            href={`/attractions/${a.id}`}
-            name={a.data.name}
-            category={a.data.category}
-            area={a.data.area}
-            rating={a.data.rating}
-            tags={a.data.tags}
-            entryFee={a.data.entryFee}
-            image={a.data.image}
-            featured={i === 0}
-          />
-        ))}
-      </ul>
-    </section>
-  )}
+  <ul class="listing-grid">
+  {allEntries.map(entry => (
+    <ListingCard
+      href={entry.href}
+      name={entry.name}
+      category={entry.category}
+      area={entry.area}
+      rating={entry.rating}
+      tags={entry.tags}
+      priceRange={entry.priceRange}
+      entryFee={entry.entryFee}
+      image={entry.image}
+      typeLabel={entry.typeLabel}
+    />
+  ))}
+</ul>
 </BaseLayout>

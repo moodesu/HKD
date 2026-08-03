@@ -1,0 +1,17 @@
+<button id="back-to-top" class="back-to-top" aria-label="Back to top">↑</button>
+
+<script is:inline>
+  const btn = document.getElementById('back-to-top');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  });
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
