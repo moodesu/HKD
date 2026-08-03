@@ -240,19 +240,30 @@ main {
 /* ===== Tags ===== */
 .tag {
   display: inline-block;
-  background: var(--color-accent-light);
-  border: 1px solid var(--color-accent);
+  background-color: var(--color-accent-light);
   color: var(--color-accent);
-  border-radius: 999px;
-  padding: 0.35rem 0.9rem;
-  margin: 0 0.4rem 0.4rem 0;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  margin: 0 0.3rem 0.3rem 0;
+  border-radius: 4px;
+  border: 1px solid rgba(181, 72, 46, 0.15);
+  text-transform: lowercase;
 }
 
 a.tag {
   text-decoration: none;
   transition: background 0.15s ease;
+}
+
+.card-body .tags {
+  margin-top: 0.5rem;
+}
+
+.card-body .tag {
+  font-size: 0.7rem;
+  padding: 0.12rem 0.45rem;
+  margin: 0 0.25rem 0.25rem 0;
 }
 
 /* ===== Section headers ===== */
@@ -848,12 +859,14 @@ a.tag {
   position: absolute;
   top: 0.6rem;
   left: 0.6rem;
-  background: var(--color-accent-light);
+  background-color: var(--color-accent-light);
   color: var(--color-accent);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  border: 1px solid rgba(181, 72, 46, 0.15);
+  text-transform: lowercase;
   z-index: 1;
 }
 

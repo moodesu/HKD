@@ -7,6 +7,7 @@ address: "43-9 Goryokakucho, Hakodate, Hokkaido"
 category: "Viewpoint"
 openingHours: "9:00–18:00"
 entryFee: "¥900"
+image: "hero.jpg"
 ---
 
 An observation tower built beside Goryokaku Park, giving a full aerial
