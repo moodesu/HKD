@@ -67,11 +67,33 @@ const placeLookup = Object.fromEntries([
 ]);
 ---
 <BaseLayout title="Search" description="Search Hakodate Guide">
-  <div class="detail-page">
-    <h1 id="search-query-display">Search Results</h1>
-    <ul id="full-search-results" class="listing-grid"></ul>
-    <p id="no-results" class="filter-empty" style="display:none;">No results found.</p>
-  </div>
+  <main class="search-page">
+    <header class="search-page-header">
+      <p class="eyebrow">Find a place</p>
+      <h1 id="search-query-display" class="search-page-title">Search the guide</h1>
+
+      <form class="search-page-form" action="/search" method="get" role="search">
+        <label class="sr-only" for="search-page-input">Search the Hakodate guide</label>
+        <input
+          id="search-page-input"
+          name="q"
+          type="search"
+          placeholder="Restaurant, bar, attraction, area…"
+          autocomplete="off"
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      <p id="search-page-intro" class="search-page-intro">
+        Search by place name, category, neighbourhood, tag or something mentioned in a local note.
+      </p>
+    </header>
+
+    <section class="search-results" aria-live="polite">
+      <ul id="full-search-results" class="listing-grid search-results-grid"></ul>
+      <p id="no-results" class="search-empty" style="display:none;">No results found.</p>
+    </section>
+  </main>
 </BaseLayout>
 
 <script define:vars={{ placeLookup }} is:inline>
@@ -96,8 +118,6 @@ const placeLookup = Object.fromEntries([
     return tokens.every(token => {
       if (haystack.includes(token)) return true;
 
-      // Small English singular/plural tolerance while preventing unrelated
-      // fuzzy Pagefind matches from leaking into the result list.
       if (token.length > 3 && token.endsWith('s') && haystack.includes(token.slice(0, -1))) {
         return true;
       }
@@ -121,13 +141,21 @@ const placeLookup = Object.fromEntries([
 
   async function runFullSearch() {
     const params = new URLSearchParams(window.location.search);
-    const term = params.get('q') || '';
+    const term = params.get('q')?.trim() || '';
+    const title = document.getElementById('search-query-display');
+    const input = document.getElementById('search-page-input');
+    const intro = document.getElementById('search-page-intro');
 
-    document.getElementById('search-query-display').textContent = term
-      ? `Results for "${term}"`
-      : 'Search';
+    if (input) input.value = term;
 
-    if (!term) return;
+    title.textContent = term ? `Results for "${term}"` : 'Search the guide';
+
+    if (!term) {
+      intro.style.display = 'block';
+      return;
+    }
+
+    intro.style.display = 'none';
 
     const pagefind = await import(/* @vite-ignore */ '/pagefind/pagefind.js');
     await pagefind.init();
