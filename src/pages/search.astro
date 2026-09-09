@@ -82,16 +82,22 @@ const placeLookup = Object.fromEntries([
     const resultsList = document.getElementById('full-search-results');
     const noResults = document.getElementById('no-results');
 
-    const matches = search.results
-      .map(result => ({ result, meta: placeLookup[normalizePath(result.url)] }))
-      .filter(item => item.meta);
+    const matches = (await Promise.all(
+      search.results.map(async result => {
+        const data = await result.data();
+        return {
+          data,
+          meta: placeLookup[normalizePath(data.url)],
+        };
+      })
+    )).filter(item => item.meta);
 
     if (matches.length === 0) {
       noResults.style.display = 'block';
       return;
     }
 
-    for (const { result, meta } of matches) {
+    for (const { data, meta } of matches) {
       const li = document.createElement('li');
       li.className = 'listing-card';
 
@@ -100,7 +106,7 @@ const placeLookup = Object.fromEntries([
         : `<div class="card-image"><div class="card-image-placeholder"><span class="placeholder-label">Image to come</span></div></div>`;
 
       li.innerHTML = `
-        <a href="${escapeHtml(result.url)}">
+        <a href="${escapeHtml(data.url)}">
           ${imageBlock}
           <div class="card-body">
             <div class="card-meta-row">
