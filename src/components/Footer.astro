@@ -2,5 +2,17 @@
 const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
-  <p>&copy; {year} Hakodate Guide</p>
+  <div class="footer-inner">
+    <div>
+      <p class="footer-brand">HAKODATE</p>
+      <p class="footer-deck">An independent local guide to food, drink, and places around Hakodate.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/restaurants">Eat</a>
+      <a href="/bars">Drink</a>
+      <a href="/attractions">See</a>
+      <a href="/search">Search</a>
+    </nav>
+    <p class="footer-meta">© {year} Hakodate Guide</p>
+  </div>
 </footer>

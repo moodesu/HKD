@@ -6,18 +6,42 @@ interface Props {
   title: string;
   subtitle?: string;
   image?: ImageMetadata;
+  eyebrow?: string;
+  count?: number;
+  sectionNumber?: string;
 }
 
-const { title, subtitle, image } = Astro.props;
+const {
+  title,
+  subtitle,
+  image,
+  eyebrow = 'Hakodate guide',
+  count,
+  sectionNumber,
+} = Astro.props;
+
+const placeLabel = count === 1 ? 'place' : 'places';
 ---
-<div class="site-hero">
-  {image ? (
-    <Image src={image} alt={title} width={1200} height={400} class="site-hero-img" />
-  ) : (
-    <div class="site-hero-placeholder"></div>
-  )}
-  <div class="site-hero-content">
-    <h1>{title}</h1>
-    {subtitle && <p>{subtitle}</p>}
+<section class={`section-hero ${image ? 'section-hero--image' : 'section-hero--plain'}`}>
+  <div class="section-hero-inner">
+    {image && (
+      <div class="section-hero-media">
+        <Image src={image} alt="" width={1400} height={900} class="section-hero-img" />
+      </div>
+    )}
+
+    <div class="section-hero-panel">
+      {sectionNumber && <span class="section-hero-number" aria-hidden="true">{sectionNumber}</span>}
+
+      <div class="section-hero-copy">
+        <p class="eyebrow">{eyebrow}</p>
+        <h1>{title}</h1>
+        {subtitle && <p class="section-hero-deck">{subtitle}</p>}
+      </div>
+
+      {count !== undefined && (
+        <p class="section-hero-count">{count} {placeLabel} in the guide</p>
+      )}
+    </div>
   </div>
-</div>
+</section>

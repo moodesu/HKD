@@ -11,17 +11,15 @@ interface Props {
 
 const { description, fields } = Astro.props;
 ---
-<div class="info-card">
-  <div class="info-card-summary">
-    <h2>Summary</h2>
-    <p>{description}</p>
-  </div>
-  <div class="info-card-fields">
+<aside class="info-card">
+  <p class="eyebrow">At a glance</p>
+  <p class="info-card-summary">{description}</p>
+  <dl class="info-card-fields">
     {fields.map(field => (
       <div class="info-field">
-        <span class="info-label">{field.label}</span>
-        <span class="info-value">{field.value}</span>
+        <dt>{field.label}</dt>
+        <dd>{field.value}</dd>
       </div>
     ))}
-  </div>
-</div>
+  </dl>
+</aside>

@@ -3,78 +3,75 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ListingCard from '../../components/ListingCard.astro';
 import Hero from '../../components/Hero.astro';
-// Once you have the photo: import restaurantsHero from '../../assets/hero/restaurants.jpg';
+import restaurantsHero from '../../assets/hero/restaurants.jpg';
 
-const allRestaurants = await getCollection('restaurants');
-const categories = [...new Set(allRestaurants.map(r => r.data.category))].sort();
-const areas = [...new Set(allRestaurants.map(r => r.data.area))].sort();
-const allTags = [...new Set(allRestaurants.flatMap(r => r.data.tags))].sort();
+const allRestaurants = (await getCollection('restaurants')).sort((a, b) => b.data.rating - a.data.rating);
+const categories = [...new Set(allRestaurants.map(entry => entry.data.category))].sort();
+const areas = [...new Set(allRestaurants.map(entry => entry.data.area))].sort();
+const allTags = [...new Set(allRestaurants.flatMap(entry => entry.data.tags))].sort();
 ---
-<BaseLayout title="Restaurants" description="Restaurants in and around Hakodate">
-  <Hero title="Restaurants" subtitle="Where to eat around Hakodate" />
+<BaseLayout title="Restaurants" description="Restaurants and local places to eat in and around Hakodate">
+  <Hero title="Eat" subtitle="Restaurants, morning-market breakfasts, and local institutions worth making time for." image={restaurantsHero} eyebrow="Hakodate guide · Restaurants" count={allRestaurants.length} sectionNumber="01" />
 
-  <div class="filters">
-    <label>
-      Category
-      <select id="filter-category">
-        <option value="">All</option>
-        {categories.map(c => <option value={c}>{c}</option>)}
-      </select>
-    </label>
-    <label>
-      Area
-      <select id="filter-area">
-        <option value="">All</option>
-        {areas.map(a => <option value={a}>{a}</option>)}
-      </select>
-    </label>
-    <label>
-      Tag
-      <select id="filter-tag">
-        <option value="">All</option>
-        {allTags.map(t => <option value={t}>{t}</option>)}
-      </select>
-    </label>
-  </div>
+  <section class="directory-section">
+    <div class="directory-toolbar">
+      <div>
+        <p class="eyebrow">The directory</p>
+        <p id="result-count" class="result-count">{allRestaurants.length} {allRestaurants.length === 1 ? 'place' : 'places'}</p>
+      </div>
+      <details class="filter-panel">
+        <summary>Filter <span>+</span></summary>
+        <div class="filters">
+          <label>Category
+            <select id="filter-category"><option value="">All categories</option>{categories.map(value => <option value={value}>{value}</option>)}</select>
+          </label>
+          <label>Area
+            <select id="filter-area"><option value="">All areas</option>{areas.map(value => <option value={value}>{value}</option>)}</select>
+          </label>
+          <label>Tag
+            <select id="filter-tag"><option value="">All tags</option>{allTags.map(value => <option value={value}>{value}</option>)}</select>
+          </label>
+          <button id="filter-reset" class="filter-reset" type="button">Reset filters</button>
+        </div>
+      </details>
+    </div>
 
-  <ul id="restaurant-list" class="featured-grid">
-    {allRestaurants.map((r, i) => (
-      <ListingCard
-        href={`/restaurants/${r.id}`}
-        name={r.data.name}
-        category={r.data.category}
-        area={r.data.area}
-        rating={r.data.rating}
-        tags={r.data.tags}
-        priceRange={r.data.priceRange}
-        image={r.data.image}
-        filterable={true}
-        featured={i === 0}
-      />
-    ))}
-  </ul>
+    <ul class="listing-grid directory-grid">
+      {allRestaurants.map((entry, index) => (
+        <ListingCard href={`/restaurants/${entry.id}`} name={entry.data.name} category={entry.data.category} area={entry.data.area} rating={entry.data.rating} tags={entry.data.tags} priceRange={entry.data.priceRange} image={entry.data.image} filterable={true} variant={index === 0 ? 'feature' : 'standard'} index={index + 1} />
+      ))}
+    </ul>
+    <p id="filter-empty" class="filter-empty" hidden>No places match those filters.</p>
+  </section>
 </BaseLayout>
 
 <script>
   const categorySelect = document.getElementById('filter-category') as HTMLSelectElement;
   const areaSelect = document.getElementById('filter-area') as HTMLSelectElement;
   const tagSelect = document.getElementById('filter-tag') as HTMLSelectElement;
-  const cards = document.querySelectorAll<HTMLElement>('.listing-card');
+  const reset = document.getElementById('filter-reset') as HTMLButtonElement;
+  const count = document.getElementById('result-count') as HTMLElement;
+  const empty = document.getElementById('filter-empty') as HTMLElement;
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-filter-card]')];
 
   function applyFilters() {
-    const category = categorySelect.value;
-    const area = areaSelect.value;
-    const tag = tagSelect.value;
-
+    let visible = 0;
     cards.forEach(card => {
-      const matchesCategory = !category || card.dataset.category === category;
-      const matchesArea = !area || card.dataset.area === area;
-      const matchesTag = !tag || card.dataset.tags?.split(',').includes(tag);
-      card.style.display = (matchesCategory && matchesArea && matchesTag) ? '' : 'none';
+      const matches = (!categorySelect.value || card.dataset.category === categorySelect.value)
+        && (!areaSelect.value || card.dataset.area === areaSelect.value)
+        && (!tagSelect.value || card.dataset.tags?.split(',').includes(tagSelect.value));
+      card.hidden = !matches;
+      if (matches) visible += 1;
     });
+    count.textContent = `${visible} ${visible === 1 ? 'place' : 'places'}`;
+    empty.hidden = visible !== 0;
   }
 
-  categorySelect.addEventListener('change', applyFilters);
-  areaSelect.addEventListener('change', applyFilters);
-  tagSelect.addEventListener('change', applyFilters);
+  [categorySelect, areaSelect, tagSelect].forEach(select => select.addEventListener('change', applyFilters));
+  reset.addEventListener('click', () => {
+    categorySelect.value = '';
+    areaSelect.value = '';
+    tagSelect.value = '';
+    applyFilters();
+  });
 </script>

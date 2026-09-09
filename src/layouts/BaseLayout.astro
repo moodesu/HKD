@@ -6,42 +6,50 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
-  image?: string;
+  image?: string | { src?: string };
 }
+
 const {
   title,
-  description = "Discover Hakodate",
-  image = "/og-default.jpg"
+  description = 'An independent local guide to Hakodate — food, drink, and places.',
+  image = '/og-default.jpg',
 } = Astro.props;
+
+const pageTitle = title === 'Home' ? 'Hakodate — A local guide' : `${title} | Hakodate`;
+const socialImage = typeof image === 'string' ? image : image?.src || '/og-default.jpg';
 ---
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f2eee5" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap"
+      rel="stylesheet"
+    />
 
-  <title>{title} | Hakodate Guide</title>
-  <meta name="description" content={description} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
 
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content={`${title} | Hakodate Guide`} />
-  <meta property="og:description" content={description} />
-  <meta property="og:image" content={image} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImage} />
 
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={`${title} | Hakodate Guide`} />
-  <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content={image} />
-</head>
-<body>
-  <Header />
-  <main>
-    <slot />
-  </main>
-  <Footer />
-</body>
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
 </html>

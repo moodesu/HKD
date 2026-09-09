@@ -14,37 +14,64 @@ interface Props {
   image?: ImageMetadata;
   filterable?: boolean;
   featured?: boolean;
+  variant?: 'standard' | 'feature' | 'compact';
   typeLabel?: string;
+  showTags?: boolean;
+  index?: number;
 }
 
-const { href, name, category, area, rating, tags, priceRange, entryFee, image, filterable = false, featured = false, typeLabel } = Astro.props;
+const {
+  href,
+  name,
+  category,
+  area,
+  rating,
+  tags,
+  priceRange,
+  entryFee,
+  image,
+  filterable = false,
+  featured = false,
+  variant = featured ? 'feature' : 'standard',
+  typeLabel,
+  showTags = false,
+  index,
+} = Astro.props;
+
+const ratingLabel = rating > 0 ? rating.toFixed(1).replace('.0', '') : null;
 ---
 <li
-  class={`listing-card ${featured ? 'featured' : ''}`}
+  class={`listing-card listing-card--${variant}`}
+  data-filter-card={filterable ? '' : undefined}
   data-category={filterable ? category : undefined}
   data-area={filterable ? area : undefined}
   data-tags={filterable ? tags.join(',') : undefined}
 >
   <a href={href}>
     <div class="card-image">
-      {typeLabel && <span class="card-type-badge">{typeLabel}</span>}
       {image ? (
-        <Image src={image} alt={name} width={featured ? 700 : 400} height={featured ? 500 : 300} />
+        <Image src={image} alt={name} width={variant === 'feature' ? 760 : 520} height={variant === 'feature' ? 560 : 390} />
       ) : (
-        <div class="card-image-placeholder"></div>
+        <div class="card-image-placeholder" aria-hidden="true"><span class="placeholder-label">Image to come</span></div>
       )}
+      {typeLabel && <span class="card-type">{typeLabel}</span>}
     </div>
     <div class="card-body">
-      <h2>{name}</h2>
-      <p>{category} — {area}</p>
-      <p>
-        {priceRange && <>{priceRange} · </>}
-        {entryFee && <>{entryFee} · </>}
-        ★ {rating}
-      </p>
-      <div class="tags">
-        {tags.map(tag => <span class="tag">{tag}</span>)}
+      <div class="card-meta-row">
+        <span>{index ? String(index).padStart(2, '0') : category}</span>
+        <span>{area}</span>
       </div>
+      <h2>{name}</h2>
+      <p class="card-details">
+        {priceRange && <span>{priceRange}</span>}
+        {entryFee && <span>{entryFee}</span>}
+        {ratingLabel && <span>★ {ratingLabel}</span>}
+      </p>
+      {showTags && tags.length > 0 && (
+        <div class="tags">
+          {tags.slice(0, 4).map(tag => <span class="tag">{tag}</span>)}
+        </div>
+      )}
     </div>
   </a>
 </li>

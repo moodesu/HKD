@@ -9,66 +9,50 @@ import BackToTop from '../../components/BackToTop.astro';
 
 export async function getStaticPaths() {
   const restaurants = await getCollection('restaurants');
-  return restaurants.map(restaurant => ({
-    params: { id: restaurant.id },
-    props: { restaurant },
-  }));
+  return restaurants.map(restaurant => ({ params: { id: restaurant.id }, props: { restaurant } }));
 }
 
 const { restaurant } = Astro.props;
 const { Content } = await render(restaurant);
-
 const fields = [
   { label: 'Category', value: restaurant.data.category },
   { label: 'Area', value: restaurant.data.area },
   { label: 'Price', value: restaurant.data.priceRange },
   { label: 'Hours', value: restaurant.data.hours },
   { label: 'Address', value: restaurant.data.address },
-  { label: 'Rating', value: `${restaurant.data.rating} / 5` },
+  ...(restaurant.data.rating > 0 ? [{ label: 'Rating', value: `${restaurant.data.rating} / 5` }] : []),
 ];
 ---
-<BaseLayout title={restaurant.data.name} description={restaurant.data.name} image={restaurant.data.image}>
+<BaseLayout title={restaurant.data.name} description={`${restaurant.data.name} — ${restaurant.data.category} in ${restaurant.data.area}`} image={restaurant.data.image}>
   <article data-pagefind-body class="detail-page">
-
     <header class="detail-header">
-      <div class="tags">
-        {restaurant.data.tags.map(tag => <a href={`/tags/${tag}`} class="tag">{tag}</a>)}
-      </div>
+      <p class="eyebrow">Eat · {restaurant.data.area}</p>
       <h1>{restaurant.data.name}</h1>
+      <p class="detail-deck">{restaurant.data.category} in {restaurant.data.area}.</p>
+      <div class="tags">{restaurant.data.tags.map(tag => <a href={`/tags/${tag}`} class="tag">{tag}</a>)}</div>
     </header>
 
-    {restaurant.data.image && (
-      <Image src={restaurant.data.image} alt={restaurant.data.name} width={800} height={500} class="detail-hero" />
-    )}
+    {restaurant.data.image && <Image src={restaurant.data.image} alt={restaurant.data.name} width={1400} height={900} class="detail-hero" />}
 
-    {/* TODO: replace auto-generated description below with a manually written summary per entry */}
-<div data-pagefind-ignore>
-  <InfoCard description={`A ${restaurant.data.category} spot in ${restaurant.data.area}.`} fields={fields} />
-</div>
-
-    <div class="review-card">
-      <h2>The Review</h2>
-      <div class="review-body">
-        <Content />
+    <div class="detail-columns">
+      <div data-pagefind-ignore class="detail-sidebar">
+        <InfoCard description={`${restaurant.data.category} in ${restaurant.data.area}.`} fields={fields} />
       </div>
+      <section class="detail-story">
+        <p class="eyebrow">The local note</p>
+        <div class="review-body"><Content /></div>
+      </section>
     </div>
 
-    <MapEmbed address={restaurant.data.address} name={restaurant.data.name} />
+    <section class="location-section" data-pagefind-ignore>
+      <div class="section-heading">
+        <div><p class="eyebrow">Find it</p><h2>{restaurant.data.area}</h2></div>
+        <p class="location-address">{restaurant.data.address}</p>
+      </div>
+      <MapEmbed address={restaurant.data.address} name={restaurant.data.name} />
+    </section>
 
-    <RelatedPlaces
-      collection="restaurants"
-      currentId={restaurant.id}
-      area={restaurant.data.area}
-      category={restaurant.data.category}
-      />
-
-      <RelatedPlaces
-      collection="restaurants"
-      currentId={restaurant.id}
-      area={restaurant.data.area}
-      category={restaurant.data.category}
-    />
-
+    <RelatedPlaces collection="restaurants" currentId={restaurant.id} area={restaurant.data.area} category={restaurant.data.category} title={`More places to eat`} />
     <BackToTop />
   </article>
 </BaseLayout>

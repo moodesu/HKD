@@ -7,23 +7,37 @@ interface Props {
   currentId: string;
   area: string;
   category: string;
+  title?: string;
+  limit?: number;
 }
 
-const { collection, currentId, area, category } = Astro.props;
+const {
+  collection,
+  currentId,
+  area,
+  category,
+  title = 'More to explore',
+  limit = 3,
+} = Astro.props;
 
 const all = await getCollection(collection);
 const others = all.filter(entry => entry.id !== currentId);
-
-// Prioritize same area first, then same category, cap at 3
-const sameArea = others.filter(e => e.data.area === area);
-const sameCategory = others.filter(e => e.data.category === category && e.data.area !== area);
-const related = [...sameArea, ...sameCategory].slice(0, 3);
+const sameArea = others.filter(entry => entry.data.area === area);
+const sameCategory = others.filter(entry => entry.data.category === category && entry.data.area !== area);
+const remaining = others.filter(entry => !sameArea.includes(entry) && !sameCategory.includes(entry));
+const related = [...sameArea, ...sameCategory, ...remaining].slice(0, limit);
 ---
 {related.length > 0 && (
-  <section class="related-places">
-    <h2>You might also like</h2>
-    <ul class="listing-grid">
-      {related.map(entry => (
+  <section class="related-places editorial-section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Keep going</p>
+        <h2>{title}</h2>
+      </div>
+      <a href={`/${collection}`} class="text-link">View all →</a>
+    </div>
+    <ul class="listing-grid related-grid">
+      {related.map((entry, index) => (
         <ListingCard
           href={`/${collection}/${entry.id}`}
           name={entry.data.name}
@@ -34,6 +48,7 @@ const related = [...sameArea, ...sameCategory].slice(0, 3);
           priceRange={entry.data.priceRange}
           entryFee={entry.data.entryFee}
           image={entry.data.image}
+          index={index + 1}
         />
       ))}
     </ul>

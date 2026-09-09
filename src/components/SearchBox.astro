@@ -5,7 +5,13 @@ interface Props {
 const { instanceId = 'default' } = Astro.props;
 ---
 <div class="search-box">
-  <input type="text" id={`search-input-${instanceId}`} placeholder="Search restaurants, bars, attractions..." />
+  <input
+    type="search"
+    id={`search-input-${instanceId}`}
+    placeholder="Search the guide"
+    aria-label="Search the Hakodate guide"
+    autocomplete="off"
+  />
 </div>
 
 <script define:vars={{ instanceId }} is:inline>

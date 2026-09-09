@@ -1,83 +1,144 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ListingCard from '../components/ListingCard.astro';
-import HeroCarousel from '../components/HeroCarousel.astro';
+import homepageHero from '../assets/hero/homepage.jpg';
 
-const restaurants = await getCollection('restaurants');
-const bars = await getCollection('bars');
-const attractions = await getCollection('attractions');
+const restaurants = (await getCollection('restaurants')).sort((a, b) => b.data.rating - a.data.rating);
+const bars = (await getCollection('bars')).sort((a, b) => b.data.rating - a.data.rating);
+const attractions = (await getCollection('attractions')).sort((a, b) => b.data.rating - a.data.rating);
 
-const topRestaurants = [...restaurants].sort((a, b) => b.data.rating - a.data.rating).slice(0, 3);
-const topBars = [...bars].sort((a, b) => b.data.rating - a.data.rating).slice(0, 3);
-const topAttractions = [...attractions].sort((a, b) => b.data.rating - a.data.rating).slice(0, 3);
-
-const carouselSlides = [
-  ...topRestaurants.map(r => ({ name: r.data.name, category: 'Restaurant', href: `/restaurants/${r.id}`, image: r.data.image })),
-  ...topBars.map(b => ({ name: b.data.name, category: 'Bar', href: `/bars/${b.id}`, image: b.data.image })),
-  ...topAttractions.map(a => ({ name: a.data.name, category: 'Attraction', href: `/attractions/${a.id}`, image: a.data.image })),
-].filter(slide => slide.image);
-
-const allEntries = [
-  ...restaurants.map(r => ({
-    href: `/restaurants/${r.id}`,
-    typeLabel: 'Restaurant',
-    name: r.data.name,
-    category: r.data.category,
-    area: r.data.area,
-    rating: r.data.rating,
-    tags: r.data.tags,
-    priceRange: r.data.priceRange as string | undefined,
-    entryFee: undefined as string | undefined,
-    image: r.data.image,
-  })),
-  ...bars.map(b => ({
-    href: `/bars/${b.id}`,
-    typeLabel: 'Bar',
-    name: b.data.name,
-    category: b.data.category,
-    area: b.data.area,
-    rating: b.data.rating,
-    tags: b.data.tags,
-    priceRange: b.data.priceRange as string | undefined,
-    entryFee: undefined as string | undefined,
-    image: b.data.image,
-  })),
-  ...attractions.map(a => ({
-    href: `/attractions/${a.id}`,
-    typeLabel: 'Attraction',
-    name: a.data.name,
-    category: a.data.category,
-    area: a.data.area,
-    rating: a.data.rating,
-    tags: a.data.tags,
-    priceRange: undefined as string | undefined,
-    entryFee: a.data.entryFee as string | undefined,
-    image: a.data.image,
-  })),
-].sort((a, b) => b.rating - a.rating);
+const leadAttraction = attractions.find(entry => entry.id === 'goryokaku-tower') ?? attractions[0];
+const leadImage = leadAttraction?.data.image;
 ---
-<BaseLayout title="Home" description="A local guide to Hakodate — restaurants, bars, and attractions">
-  <HeroCarousel slides={carouselSlides} />
+<BaseLayout title="Home" description="An independent local guide to Hakodate — food, drink, and places worth your time.">
+  <section class="home-hero">
+    <Image src={homepageHero} alt="Hakodate" width={1800} height={1050} class="home-hero-img" />
+    <div class="home-hero-shade"></div>
+    <div class="home-hero-content">
+      <p class="eyebrow eyebrow--light">Hakodate · Hokkaido</p>
+      <h1>A local guide to the city by the sea.</h1>
+      <p>Independent places, familiar favourites, and the corners of Hakodate worth slowing down for.</p>
+      <div class="hero-actions">
+        <a href="#local-picks" class="button button--light">Start exploring</a>
+        <a href="/search" class="button button--ghost-light">Search the guide</a>
+      </div>
+    </div>
+    <p class="home-hero-caption">Food · drink · neighbourhoods · views</p>
+  </section>
 
-  <div class="section-header">
-    <h2>All places</h2>
-  </div>
+  <section id="local-picks" class="editorial-section intro-section">
+    <div class="intro-number">01</div>
+    <div class="intro-copy">
+      <p class="eyebrow">The local edit</p>
+      <h2>Start with what makes Hakodate feel like Hakodate.</h2>
+      <p>Seafood before breakfast, old port streets in the afternoon, a view over the star fort, and somewhere quiet for a drink after dark.</p>
+    </div>
+  </section>
 
-  <ul class="listing-grid">
-  {allEntries.map(entry => (
-    <ListingCard
-      href={entry.href}
-      name={entry.name}
-      category={entry.category}
-      area={entry.area}
-      rating={entry.rating}
-      tags={entry.tags}
-      priceRange={entry.priceRange}
-      entryFee={entry.entryFee}
-      image={entry.image}
-      typeLabel={entry.typeLabel}
-    />
-  ))}
-</ul>
+  {leadAttraction && (
+    <section class="lead-story editorial-section">
+      <a href={`/attractions/${leadAttraction.id}`} class="lead-story-image-link">
+        {leadImage ? (
+          <Image src={leadImage} alt={leadAttraction.data.name} width={1200} height={800} class="lead-story-image" />
+        ) : (
+          <div class="lead-story-placeholder"></div>
+        )}
+      </a>
+      <div class="lead-story-copy">
+        <p class="eyebrow">Editor's pick · See</p>
+        <h2><a href={`/attractions/${leadAttraction.id}`}>{leadAttraction.data.name}</a></h2>
+        <p>The city’s star-shaped fort is best understood from above — then head back down and walk the grounds at street level.</p>
+        <a href={`/attractions/${leadAttraction.id}`} class="text-link">Read the local note →</a>
+      </div>
+    </section>
+  )}
+
+  <section class="editorial-section home-category">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">02 / Eat</p>
+        <h2>Places worth sitting down for.</h2>
+      </div>
+      <a href="/restaurants" class="text-link">All restaurants →</a>
+    </div>
+    <ul class="listing-grid listing-grid--three">
+      {restaurants.slice(0, 3).map((entry, index) => (
+        <ListingCard
+          href={`/restaurants/${entry.id}`}
+          name={entry.data.name}
+          category={entry.data.category}
+          area={entry.data.area}
+          rating={entry.data.rating}
+          tags={entry.data.tags}
+          priceRange={entry.data.priceRange}
+          image={entry.data.image}
+          index={index + 1}
+        />
+      ))}
+    </ul>
+  </section>
+
+  <section class="editorial-section home-category home-category--dark">
+    <div class="section-heading section-heading--light">
+      <div>
+        <p class="eyebrow eyebrow--light">03 / Drink</p>
+        <h2>After dark.</h2>
+      </div>
+      <a href="/bars" class="text-link text-link--light">All bars →</a>
+    </div>
+    <ul class="listing-grid listing-grid--one">
+      {bars.slice(0, 1).map((entry, index) => (
+        <ListingCard
+          href={`/bars/${entry.id}`}
+          name={entry.data.name}
+          category={entry.data.category}
+          area={entry.data.area}
+          rating={entry.data.rating}
+          tags={entry.data.tags}
+          priceRange={entry.data.priceRange}
+          image={entry.data.image}
+          variant="feature"
+          typeLabel="Drink"
+          index={index + 1}
+        />
+      ))}
+    </ul>
+  </section>
+
+  <section class="editorial-section home-category">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">04 / See</p>
+        <h2>Walks, views, and places with a story.</h2>
+      </div>
+      <a href="/attractions" class="text-link">All places →</a>
+    </div>
+    <ul class="listing-grid listing-grid--two">
+      {attractions.slice(0, 2).map((entry, index) => (
+        <ListingCard
+          href={`/attractions/${entry.id}`}
+          name={entry.data.name}
+          category={entry.data.category}
+          area={entry.data.area}
+          rating={entry.data.rating}
+          tags={entry.data.tags}
+          entryFee={entry.data.entryFee}
+          image={entry.data.image}
+          variant={index === 0 ? 'feature' : 'standard'}
+          index={index + 1}
+        />
+      ))}
+    </ul>
+  </section>
+
+  <section class="editorial-section browse-strip">
+    <p class="eyebrow">Browse the guide</p>
+    <div class="browse-links">
+      <a href="/restaurants"><span>Eat</span><small>Restaurants & local favourites</small></a>
+      <a href="/bars"><span>Drink</span><small>Bars & late nights</small></a>
+      <a href="/attractions"><span>See</span><small>Views, parks & landmarks</small></a>
+    </div>
+  </section>
 </BaseLayout>
