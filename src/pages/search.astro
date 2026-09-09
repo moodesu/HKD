@@ -6,6 +6,18 @@ const restaurants = await getCollection('restaurants');
 const bars = await getCollection('bars');
 const attractions = await getCollection('attractions');
 
+const makeSearchText = (entry, extras = []) => [
+  entry.data.name,
+  entry.data.category,
+  entry.data.area,
+  entry.data.address,
+  ...(entry.data.tags ?? []),
+  ...extras,
+  entry.body ?? '',
+]
+  .filter(Boolean)
+  .join(' ');
+
 const placeLookup = Object.fromEntries([
   ...restaurants.map(entry => [
     `/restaurants/${entry.id}`,
@@ -16,6 +28,10 @@ const placeLookup = Object.fromEntries([
       area: entry.data.area,
       detail: entry.data.priceRange,
       image: entry.data.image?.src ?? null,
+      searchText: makeSearchText(entry, [
+        entry.data.priceRange,
+        entry.data.hours,
+      ]),
     },
   ]),
   ...bars.map(entry => [
@@ -27,6 +43,10 @@ const placeLookup = Object.fromEntries([
       area: entry.data.area,
       detail: entry.data.priceRange,
       image: entry.data.image?.src ?? null,
+      searchText: makeSearchText(entry, [
+        entry.data.priceRange,
+        entry.data.happyHour,
+      ]),
     },
   ]),
   ...attractions.map(entry => [
@@ -38,6 +58,10 @@ const placeLookup = Object.fromEntries([
       area: entry.data.area,
       detail: entry.data.entryFee,
       image: entry.data.image?.src ?? null,
+      searchText: makeSearchText(entry, [
+        entry.data.openingHours,
+        entry.data.entryFee,
+      ]),
     },
   ]),
 ]);
@@ -54,6 +78,36 @@ const placeLookup = Object.fromEntries([
   function normalizePath(url) {
     const pathname = new URL(url, window.location.origin).pathname;
     return pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname;
+  }
+
+  function normalizeText(value) {
+    return String(value ?? '')
+      .normalize('NFKD')
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}]+/gu, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function sourceActuallyMatches(searchText, term) {
+    const haystack = normalizeText(searchText);
+    const tokens = normalizeText(term).split(' ').filter(Boolean);
+
+    return tokens.every(token => {
+      if (haystack.includes(token)) return true;
+
+      // Small English singular/plural tolerance while preventing unrelated
+      // fuzzy Pagefind matches from leaking into the result list.
+      if (token.length > 3 && token.endsWith('s') && haystack.includes(token.slice(0, -1))) {
+        return true;
+      }
+
+      if (token.length > 3 && haystack.includes(`${token}s`)) {
+        return true;
+      }
+
+      return false;
+    });
   }
 
   function escapeHtml(value) {
@@ -85,12 +139,15 @@ const placeLookup = Object.fromEntries([
     const matches = (await Promise.all(
       search.results.map(async result => {
         const data = await result.data();
-        return {
-          data,
-          meta: placeLookup[normalizePath(data.url)],
-        };
+        const meta = placeLookup[normalizePath(data.url)];
+
+        if (!meta || !sourceActuallyMatches(meta.searchText, term)) {
+          return null;
+        }
+
+        return { data, meta };
       })
-    )).filter(item => item.meta);
+    )).filter(Boolean);
 
     if (matches.length === 0) {
       noResults.style.display = 'block';
