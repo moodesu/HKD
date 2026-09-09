@@ -1,15 +1,70 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const restaurants = await getCollection('restaurants');
+const bars = await getCollection('bars');
+const attractions = await getCollection('attractions');
+
+const placeLookup = Object.fromEntries([
+  ...restaurants.map(entry => [
+    `/restaurants/${entry.id}`,
+    {
+      title: entry.data.name,
+      type: 'Eat',
+      category: entry.data.category,
+      area: entry.data.area,
+      detail: entry.data.priceRange,
+      image: entry.data.image?.src ?? null,
+    },
+  ]),
+  ...bars.map(entry => [
+    `/bars/${entry.id}`,
+    {
+      title: entry.data.name,
+      type: 'Drink',
+      category: entry.data.category,
+      area: entry.data.area,
+      detail: entry.data.priceRange,
+      image: entry.data.image?.src ?? null,
+    },
+  ]),
+  ...attractions.map(entry => [
+    `/attractions/${entry.id}`,
+    {
+      title: entry.data.name,
+      type: 'See',
+      category: entry.data.category,
+      area: entry.data.area,
+      detail: entry.data.entryFee,
+      image: entry.data.image?.src ?? null,
+    },
+  ]),
+]);
 ---
 <BaseLayout title="Search" description="Search Hakodate Guide">
   <div class="detail-page">
     <h1 id="search-query-display">Search Results</h1>
     <ul id="full-search-results" class="listing-grid"></ul>
-    <p id="no-results" style="display:none;">No results found.</p>
+    <p id="no-results" class="filter-empty" style="display:none;">No results found.</p>
   </div>
 </BaseLayout>
 
-<script is:inline>
+<script define:vars={{ placeLookup }} is:inline>
+  function normalizePath(url) {
+    const pathname = new URL(url, window.location.origin).pathname;
+    return pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
   async function runFullSearch() {
     const params = new URLSearchParams(window.location.search);
     const term = params.get('q') || '';
@@ -27,35 +82,40 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const resultsList = document.getElementById('full-search-results');
     const noResults = document.getElementById('no-results');
 
-    if (search.results.length === 0) {
+    const matches = search.results
+      .map(result => ({ result, meta: placeLookup[normalizePath(result.url)] }))
+      .filter(item => item.meta);
+
+    if (matches.length === 0) {
       noResults.style.display = 'block';
       return;
     }
 
-    for (const result of search.results) {
-      const data = await result.data();
+    for (const { result, meta } of matches) {
       const li = document.createElement('li');
       li.className = 'listing-card';
 
-      const imageBlock = data.meta.image
-        ? `<div class="card-image"><img src="${data.meta.image}" alt="${data.meta.title}" loading="lazy" /></div>`
-        : `<div class="card-image"><div class="card-image-placeholder"></div></div>`;
-
-      const tagList = data.filters.tag || [];
-      const tagsBlock = tagList.length > 0
-        ? `<div class="tags">${tagList.map(t => `<span class="tag">${t}</span>`).join('')}</div>`
-        : '';
+      const imageBlock = meta.image
+        ? `<div class="card-image"><img src="${escapeHtml(meta.image)}" alt="${escapeHtml(meta.title)}" loading="lazy" /></div>`
+        : `<div class="card-image"><div class="card-image-placeholder"><span class="placeholder-label">Image to come</span></div></div>`;
 
       li.innerHTML = `
-        <a href="${data.url}">
+        <a href="${escapeHtml(result.url)}">
           ${imageBlock}
           <div class="card-body">
-            <h2>${data.meta.title}</h2>
-            <p>${data.excerpt}</p>
-            ${tagsBlock}
+            <div class="card-meta-row">
+              <span>${escapeHtml(meta.type)}</span>
+              <span>${escapeHtml(meta.area)}</span>
+            </div>
+            <h2>${escapeHtml(meta.title)}</h2>
+            <p class="card-details">
+              <span>${escapeHtml(meta.category)}</span>
+              ${meta.detail ? `<span>${escapeHtml(meta.detail)}</span>` : ''}
+            </p>
           </div>
         </a>
       `;
+
       resultsList.appendChild(li);
     }
   }

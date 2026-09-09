@@ -24,27 +24,31 @@ const fields = [
 ];
 ---
 <BaseLayout title={restaurant.data.name} description={`${restaurant.data.name} — ${restaurant.data.category} in ${restaurant.data.area}`} image={restaurant.data.image}>
-  <article data-pagefind-body class="detail-page">
-    <header class="detail-header">
-      <p class="eyebrow">Eat · {restaurant.data.area}</p>
-      <h1>{restaurant.data.name}</h1>
-      <p class="detail-deck">{restaurant.data.category} in {restaurant.data.area}.</p>
-      <div class="tags">{restaurant.data.tags.map(tag => <a href={`/tags/${tag}`} class="tag">{tag}</a>)}</div>
-    </header>
+  <article class="detail-page">
+    <div data-pagefind-body>
+      <header class="detail-header">
+        <p class="eyebrow">Eat · {restaurant.data.area}</p>
+        <h1>{restaurant.data.name}</h1>
+        <p class="detail-deck">{restaurant.data.category} in {restaurant.data.area}.</p>
+        <div class="tags">{restaurant.data.tags.map(tag => <a href={`/tags/${tag}`} class="tag">{tag}</a>)}</div>
+      </header>
 
-    {restaurant.data.image && <Image src={restaurant.data.image} alt={restaurant.data.name} width={1400} height={900} class="detail-hero" />}
+      {restaurant.data.image && (
+        <Image src={restaurant.data.image} alt={restaurant.data.name} width={1400} height={900} class="detail-hero" />
+      )}
 
-    <div class="detail-columns">
-      <div data-pagefind-ignore class="detail-sidebar">
-        <InfoCard description={`${restaurant.data.category} in ${restaurant.data.area}.`} fields={fields} />
+      <div class="detail-columns">
+        <div class="detail-sidebar">
+          <InfoCard description={`${restaurant.data.category} in ${restaurant.data.area}.`} fields={fields} />
+        </div>
+        <section class="detail-story">
+          <p class="eyebrow">The local note</p>
+          <div class="review-body"><Content /></div>
+        </section>
       </div>
-      <section class="detail-story">
-        <p class="eyebrow">The local note</p>
-        <div class="review-body"><Content /></div>
-      </section>
     </div>
 
-    <section class="location-section" data-pagefind-ignore>
+    <section class="location-section">
       <div class="section-heading">
         <div><p class="eyebrow">Find it</p><h2>{restaurant.data.area}</h2></div>
         <p class="location-address">{restaurant.data.address}</p>
@@ -52,7 +56,7 @@ const fields = [
       <MapEmbed address={restaurant.data.address} name={restaurant.data.name} />
     </section>
 
-    <RelatedPlaces collection="restaurants" currentId={restaurant.id} area={restaurant.data.area} category={restaurant.data.category} title={`More places to eat`} />
+    <RelatedPlaces collection="restaurants" currentId={restaurant.id} area={restaurant.data.area} category={restaurant.data.category} title="More places to eat" />
     <BackToTop />
   </article>
 </BaseLayout>
